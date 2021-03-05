@@ -1,53 +1,17 @@
 import tkinter as Tkinter
 from ViewAuxiliar import ViewAuxiliar
+from ViewPanel import ViewPanel
+from View import View
 from PIL import ImageTk, Image
 
 # La clase representa la vista principal
-class ViewPrincipal():
+class ViewPrincipal(ViewPanel):
 
     # Constructor de objetos de la clase
     def __init__(self):
 
-        # Variables para inicializacion
-        largo = 550
-        alto = 410
-        colorFondo = ViewAuxiliar.obtenerColor(243,242,242)
-        colorContraste = ViewAuxiliar.obtenerColor(64,64,64)
-        colorTextoPanel = ViewAuxiliar.obtenerColor(220,220,220)
-
-        # Crear ventana y su canvas
-        self.__ventana = Tkinter.Tk()
-        self.__canvas = Tkinter.Canvas( 
-            self.__ventana, 
-            width=largo, 
-            height=alto,
-            bg=colorFondo, 
-            highlightthickness=0
-        ) # End canvas
-        self.__canvas.pack()
-
-        # Parametros generales de la ventana
-        self.__ventana.geometry("%sx%s" % (largo, alto))
-        self.__ventana.title("Sistema de autenticación")
-
-        # Crear panel superior
-        self.__canvas.create_rectangle( 
-            largo, 95, 0, 0, 
-            fill=colorContraste, 
-            outline=colorContraste
-        ) # End create_rectangle
-
-        etiquetaTitulo = Tkinter.Label( 
-            self.__canvas, 
-            text='Sistema de autenticación basado en BCI',
-            bg=colorContraste,
-            fg=colorTextoPanel,
-            anchor='w',
-            font="SegoeUI 12 normal"
-        ) # End label
-        
-        etiquetaTitulo.pack()
-        etiquetaTitulo.place(x=10, y=3, height=20, width=300)
+        # Llamada al constructor de la superclase
+        super().__init__()
 
         # Crear cada elemento del panel
 
@@ -56,8 +20,8 @@ class ViewPrincipal():
         renderNuevoUsuario= ImageTk.PhotoImage(imagenNuevoUsuario)
 
         etiquetaImagenNuevoUsuario = Tkinter.Label( 
-            self.__canvas, 
-            bg=colorContraste,
+            self.canvas, 
+            bg=View.COLOR_CONTRASTE,
             image=renderNuevoUsuario,
             cursor='hand2'
         ) # End label
@@ -67,75 +31,25 @@ class ViewPrincipal():
 
         # Etiqueta correspondiente al boton de crear usuario
         etiquetaDescripcionNuevoUsuario = Tkinter.Label( 
-            self.__canvas, 
+            self.canvas, 
             text='Nuevo usuario',
-            bg=colorContraste,
-            fg=colorTextoPanel,
+            bg=View.COLOR_CONTRASTE,
+            fg=View.COLOR_TEXTO_PANEL,
             font="SegoeUI 11 normal"
         ) # End label
         etiquetaDescripcionNuevoUsuario.pack()
         etiquetaDescripcionNuevoUsuario.place(x=10, y=70, height=20, width=75)
 
-        # Boton para eliminar un usuario
-        imagenEliminarUsuario = Image.open("assets/ViewPrincipal/eliminarUsuario.png")
-        renderEliminarUsuario= ImageTk.PhotoImage(imagenEliminarUsuario)
-
-        etiquetaImagenEliminarUsuario = Tkinter.Label( 
-            self.__canvas, 
-            bg=colorContraste,
-            image=renderEliminarUsuario,
-            cursor='hand2'
-        ) # End label
-
-        etiquetaImagenEliminarUsuario.pack()
-        etiquetaImagenEliminarUsuario.place(x=110, y=25, height=45, width=45)
-
-        # Etiqueta correspondiente al boton de eliminar usuario
-        etiquetaDescripcionEliminarUsuario = Tkinter.Label( 
-            self.__canvas, 
-            text='Eliminar perfil',
-            bg=colorContraste,
-            fg=colorTextoPanel,
-            font="SegoeUI 11 normal"
-        ) # End label
-        etiquetaDescripcionEliminarUsuario.pack()
-        etiquetaDescripcionEliminarUsuario.place(x=95, y=70, height=20, width=75)
-
-        # Boton para configurar un usuario
-        imagenConfigurar = Image.open("assets/ViewPrincipal/configurar.png")
-        renderConfigurar= ImageTk.PhotoImage(imagenConfigurar)
-
-        etiquetaImagenConfigurar = Tkinter.Label( 
-            self.__canvas, 
-            bg=colorContraste,
-            image=renderConfigurar,
-            cursor='hand2'
-        ) # End label
-
-        etiquetaImagenConfigurar.pack()
-        etiquetaImagenConfigurar.place(x=195, y=25, height=45, width=45)
-
-        # Etiqueta correspondiente al boton de configurar usuario
-        etiquetaDescripcionConfigurar = Tkinter.Label( 
-            self.__canvas, 
-            text='Configuración',
-            bg=colorContraste,
-            fg=colorTextoPanel,
-            font="SegoeUI 11 normal"
-        ) # End label
-        etiquetaDescripcionConfigurar.pack()
-        etiquetaDescripcionConfigurar.place(x=180, y=70, height=20, width=75)
-
         # Etiqueta descriptiva de la labor en la ventana
         etiquetaDescripcionVentana= Tkinter.Label( 
-            self.__canvas, 
+            self.canvas, 
             text='Seleccionar un usuario para acceder',
-            bg=colorFondo,
-            fg=colorContraste,
+            bg=View.COLOR_FONDO,
+            fg=View.COLOR_CONTRASTE,
             font="SegoeUI 13 normal"
         ) # End label
         etiquetaDescripcionVentana.pack()
-        etiquetaDescripcionVentana.place(x=0, y=110, height=20, width=largo)
+        etiquetaDescripcionVentana.place(x=0, y=110, height=20, width=View.LARGO)
 
         # Recorte temporal
         ViewAuxiliar.recortarImagenUsuario("assets/ViewPrincipal/imagenUsuarioDefault.jpg")
@@ -146,21 +60,21 @@ class ViewPrincipal():
         renderUsuario = ImageTk.PhotoImage(imagenUsuario)
 
         etiquetaImagenUsuario = Tkinter.Label( 
-            self.__canvas, 
-            bg=colorFondo,
+            self.canvas, 
+            bg=View.COLOR_FONDO,
             image=renderUsuario,
         ) # End label
 
         etiquetaImagenUsuario.pack()
-        etiquetaImagenUsuario.place(x=0, y=138, height=150, width=largo)
+        etiquetaImagenUsuario.place(x=0, y=138, height=150, width=View.LARGO)
 
         # Imagen de moverse a la derecha
         imagenDerecha = Image.open("assets/ViewPrincipal/moverseDerecha.png")
         renderDerecha = ImageTk.PhotoImage(imagenDerecha)
 
         etiquetaImagenDerecha = Tkinter.Label( 
-            self.__canvas, 
-            bg=colorFondo,
+            self.canvas, 
+            bg=View.COLOR_FONDO,
             image=renderDerecha,
             cursor='hand2'
         ) # End label
@@ -173,8 +87,8 @@ class ViewPrincipal():
         renderIzquierda = ImageTk.PhotoImage(imagenIzquierda)
 
         etiquetaImagenIzquierda = Tkinter.Label( 
-            self.__canvas, 
-            bg=colorFondo,
+            self.canvas, 
+            bg=View.COLOR_FONDO,
             image=renderIzquierda,
             cursor='hand2'
         ) # End label
@@ -184,35 +98,35 @@ class ViewPrincipal():
 
         # Etiqueta con el nombre del usuario
         etiquetaNombreUsuario= Tkinter.Label( 
-            self.__canvas, 
+            self.canvas, 
             text='Nombre del usuario',
-            bg=colorFondo,
+            bg=View.COLOR_FONDO,
             fg=ViewAuxiliar.obtenerColor(64,64,64),
             font="SegoeUI 16 normal"
         ) # End label
         etiquetaNombreUsuario.pack()
-        etiquetaNombreUsuario.place(x=0, y=300, height=20, width=largo)
+        etiquetaNombreUsuario.place(x=0, y=300, height=20, width=View.LARGO)
 
         # Etiqueta con el nombre del usuario
         etiquetaNombreUsuario= Tkinter.Label( 
-            self.__canvas, 
+            self.canvas, 
             text='Registrado el 01 de enero de 2021',
-            bg=colorFondo,
+            bg=View.COLOR_FONDO,
             fg=ViewAuxiliar.obtenerColor(94,94,94),
             font="SegoeUI 12 normal"
         ) # End label
         etiquetaNombreUsuario.pack()
-        etiquetaNombreUsuario.place(x=0, y=320, height=20, width=largo)
+        etiquetaNombreUsuario.place(x=0, y=320, height=20, width=View.LARGO)
 
         # Boton de escaneo EEG
         imagenEscaneoEEG = Image.open("assets/ViewPrincipal/escaneoEEG.png")
         renderEscaneoEEG  = ImageTk.PhotoImage(imagenEscaneoEEG)
         botonEscaneoEEG = Tkinter.Button( 
-            self.__canvas, 
-            fg=colorContraste, 
+            self.canvas, 
+            fg=View.COLOR_CONTRASTE, 
             text ="Usar escaneo EEG", 
             font="SegoeUI 11 normal",
-            highlightbackground=colorFondo,
+            highlightbackground=View.COLOR_FONDO,
             image=renderEscaneoEEG,
             compound = Tkinter.LEFT,
             cursor='hand2'
@@ -225,11 +139,11 @@ class ViewPrincipal():
         imagenContrasena = Image.open("assets/ViewPrincipal/contrasena.png")
         renderContrasena  = ImageTk.PhotoImage(imagenContrasena)
         botonContrasena = Tkinter.Button( 
-            self.__canvas, 
-            fg=colorContraste, 
+            self.canvas, 
+            fg=View.COLOR_CONTRASTE, 
             text ="Usar contraseña", 
             font="SegoeUI 11 normal",
-            highlightbackground=colorFondo,
+            highlightbackground=View.COLOR_FONDO,
             image=renderContrasena,
             compound = Tkinter.LEFT,
             cursor='hand2'
@@ -238,20 +152,6 @@ class ViewPrincipal():
         botonContrasena.pack()
         botonContrasena.place(x=280, y=345, height=28, width=135)
 
-        # Etiqueta del programa
-        etiquetaPrograma= Tkinter.Label( 
-            self.__canvas, 
-            text='Programa de honores. Universidad de las Américas Puebla',
-            bg=colorFondo,
-            fg=ViewAuxiliar.obtenerColor(134,134,134),
-            font="SegoeUI 9 italic",
-            anchor='w'
-        ) # End label
-        etiquetaPrograma.pack()
-        etiquetaPrograma.place(x=10, y=390, height=20, width=largo)
-
         # Ciclo principal
-        self.__ventana.mainloop()
+        self.ventana.mainloop()
 
-# Llamada al metodo principal
-interfaz = ViewPrincipal()

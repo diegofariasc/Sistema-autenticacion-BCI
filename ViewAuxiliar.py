@@ -10,7 +10,7 @@ class ViewAuxiliar:
         return '#%02x%02x%02x' % (R, G, B)
 
     @staticmethod
-    def recortarImagenUsuario(ubicacion):
+    def recortarImagenUsuario(ubicacion, rutaSalida):
 
         # Abrir imagen 
         imagen = Image.open(ubicacion).convert("RGB")
@@ -28,4 +28,4 @@ class ViewAuxiliar:
         npImage=np.dstack((npImage,npAlpha))
 
         # Guardar imagen resultante
-        Image.fromarray(npImage).save('recortada.png')
+        Image.fromarray(npImage).save(rutaSalida)

@@ -32,7 +32,7 @@ class View():
         self.ventana.title("Sistema de autenticación - Nombre del usuario")
 
          # Etiqueta del programa
-        etiquetaPrograma= Tkinter.Label( 
+        self.etiquetaPrograma= Tkinter.Label( 
             self.canvas, 
             text='Programa de honores. Universidad de las Américas Puebla',
             bg=View.COLOR_FONDO,
@@ -40,8 +40,8 @@ class View():
             font="SegoeUI 9 italic",
             anchor='w'
         ) # End label
-        etiquetaPrograma.pack()
-        etiquetaPrograma.place(x=10, y=390, height=20, width=View.LARGO)
+        self.etiquetaPrograma.pack()
+        self.etiquetaPrograma.place(x=10, y=390, height=20, width=View.LARGO)
 
 
 

@@ -1,9 +1,10 @@
 
 from ViewAuxiliar import ViewAuxiliar
 import tkinter as Tkinter
+import abc
 
 # La clase representa cualquier vista
-class View():
+class View(metaclass=abc.ABCMeta):
 
     # Variables para inicializacion
     LARGO = 550
@@ -14,7 +15,7 @@ class View():
     COLOR_SELECTOR = ViewAuxiliar.obtenerColor(225,225,225)
 
     # Constructor
-    def __init__(self):
+    def construirView(self):
         
         # Crear ventana y su canvas
         self.ventana = Tkinter.Tk()
@@ -43,5 +44,7 @@ class View():
         self.etiquetaPrograma.pack()
         self.etiquetaPrograma.place(x=10, y=390, height=20, width=View.LARGO)
 
-
-
+    @abc.abstractmethod
+    def establecerListeners( self, controller ):
+        # Metodo para relacionar el controller con el view
+        return

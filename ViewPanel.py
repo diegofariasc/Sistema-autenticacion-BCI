@@ -7,10 +7,10 @@ from View import View
 # La clase representa una vista con panel superior
 class ViewPanel(View):
 
-    def __init__(self):
+    def construirView(self):
 
         # Llamada al constructor de la superclase
-        super().__init__()
+        super().construirView()
 
         # Crear panel superior
         self.canvas.create_rectangle( 

@@ -1,6 +1,13 @@
 from ViewPrincipal import ViewPrincipal
-from ViewIniciado import ViewIniciado
-from ViewCrearUsuario import ViewCrearUsuario
+from ControllerPrincipal import ControllerPrincipal
 
-# Llamada al metodo principal
-interfaz = ViewCrearUsuario()
+def main():
+
+    # Construir interfaz principal
+    viewPrincipal = ViewPrincipal()
+
+    # Relacionar interfaz principal con el controller e inicializarla
+    controllerViewPrincipal = ControllerPrincipal( viewPrincipal )
+    controllerViewPrincipal.inicializarView()
+
+main()

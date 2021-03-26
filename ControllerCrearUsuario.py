@@ -3,6 +3,8 @@ from tkinter.filedialog import askopenfilename
 from View import View
 from ViewAuxiliar import ViewAuxiliar
 from PIL import ImageTk
+from Model import Model
+from tkinter import messagebox as MessageBox
 import tkinter as Tkinter
 import os
 
@@ -14,13 +16,15 @@ class ControllerCrearUsuario(Controller):
     SEGURIDAD_MEDIA = 215
     SEGURIDAD_ALTA = 355      
 
-    def __init__(self, view):
-        super().__init__(view)
+    def __init__(self, view, model):
+        super().__init__(view, model)
+        self.__seguridadSeleccionada = Model.SEGURIDAD_MEDIA
         self.__aprobadoNombre = False
         self.__aprobadaContrasena = False
         self.__aprobadaConfirmacionContrasena = False
         self.__aprobadoOrigenDatosEEG = False
         self.__origenArchivo = ''
+        self.__imagenSeleccionada = None
 
     """
     El metodo es invocado cuando se hace clic en el boton de
@@ -93,9 +97,31 @@ class ControllerCrearUsuario(Controller):
     Input:  evento - con la descripcion del evento que la invoco
     Output: None
     """
-    @staticmethod
-    def botonRegistrar_Click(evento):
-        return
+    def botonRegistrar_Click(self, evento):
+
+        # Registrar en el model
+        if  self._model.insertarUsuario(
+            self._view.campoNombre.get(),
+            self._view.campoContrasena.get(),
+            3.15,
+            4.2,
+            5.5,
+            9.03,
+            Model.SEGURIDAD_ALTA,
+            imagen=self.__imagenSeleccionada ):
+
+            MessageBox.showinfo(
+                "Usuario registrado",
+                "El usuario se ha registrado exitosamente"
+            ) # End showinfo
+            self.__cerrarVentana()
+
+        else:
+            MessageBox.showerror(
+                "Error al crear el usuario",
+                "Se ha producido un error al crear el usuario"
+            ) # End showerror
+
 
     """
     El metodo es invocado cuando se hace clic en el boton cancelar
@@ -104,6 +130,15 @@ class ControllerCrearUsuario(Controller):
     Output: None
     """
     def botonCancelar_Click(self,evento):
+        self.__cerrarVentana()
+
+    """
+    El metodo permite cerrar la ventana actual y destruir el 
+    controller asociado
+    Input:  None
+    Output: None
+    """
+    def __cerrarVentana(self):
         self._view.ventana.destroy()
         del self._view
         del self
@@ -302,7 +337,7 @@ class ControllerCrearUsuario(Controller):
 
         try:
             # Lanzar cuadro para seleccion de imagen
-            ubicacionImagen = askopenfilename(filetypes=[("Imagenes", ".png .jpg")]) 
+            ubicacionImagen = askopenfilename(filetypes=[("Imagenes", ".jpg")]) 
 
             # Seleccionar imagen, cargarla y recortarla. Mantener en memoria
             self.__imagenSeleccionada = ViewAuxiliar.recortarImagenUsuario(ubicacionImagen)
@@ -339,6 +374,7 @@ class ControllerCrearUsuario(Controller):
             self.__cambiarSeleccionOpcion(ControllerCrearUsuario.SEGURIDAD_BAJA, False)
             self._view.canvas.move(self._view.selector, 280,0)
 
+        self.__seguridadSeleccionada = Model.SEGURIDAD_ALTA
     
     """
     El metodo es invocado cuando se hace clic en cualquier elemento
@@ -363,6 +399,7 @@ class ControllerCrearUsuario(Controller):
             self._view.canvas.move(self._view.selector, -140,0)
             self.__cambiarSeleccionOpcion(ControllerCrearUsuario.SEGURIDAD_ALTA, False)
 
+        self.__seguridadSeleccionada = Model.SEGURIDAD_MEDIA
 
     """
     El metodo es invocado cuando se hace clic en cualquier elemento
@@ -387,6 +424,7 @@ class ControllerCrearUsuario(Controller):
             self._view.canvas.move(self._view.selector, -280,0)
             self.__cambiarSeleccionOpcion(ControllerCrearUsuario.SEGURIDAD_ALTA, False)
     
+        self.__seguridadSeleccionada = Model.SEGURIDAD_BAJA
 
     """
     El metodo permite visualmente cambiar la seleccion de las 

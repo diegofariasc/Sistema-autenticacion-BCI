@@ -1,29 +1,24 @@
-from Controller import Controller
-from tkinter.filedialog import askopenfilename
-from View import View
-from ViewAuxiliar import ViewAuxiliar
-from PIL import ImageTk
-from Model import Model
-from tkinter import messagebox as MessageBox
+from Controller                     import Controller
+from tkinter.filedialog             import askopenfilenames
+from View                           import View
+from ViewAuxiliar                   import ViewAuxiliar
+from PIL                            import ImageTk
+from Model                          import Model
+from tkinter                        import messagebox as MessageBox
+from ControllerSelectorSeguridad    import ControllerSelectorSeguridad
+
 import tkinter as Tkinter
 import os
 
-class ControllerCrearUsuario(Controller):
-
-    # Variables estaticas para identificar
-    # las opciones de seguridad en el view 
-    SEGURIDAD_BAJA = 75
-    SEGURIDAD_MEDIA = 215
-    SEGURIDAD_ALTA = 355      
+class ControllerCrearUsuario(ControllerSelectorSeguridad):
 
     def __init__(self, view, model):
         super().__init__(view, model)
-        self.__seguridadSeleccionada = Model.SEGURIDAD_MEDIA
         self.__aprobadoNombre = False
         self.__aprobadaContrasena = False
         self.__aprobadaConfirmacionContrasena = False
         self.__aprobadoOrigenDatosEEG = False
-        self.__origenArchivo = ''
+        self.__archivosOrigen = []
         self.__imagenSeleccionada = None
 
     """
@@ -35,14 +30,28 @@ class ControllerCrearUsuario(Controller):
     def botonCargarArchivo_Click(self, evento):
 
         # Lanzar cuadro para seleccion de imagen
-        self.__origenArchivo = askopenfilename(filetypes=[("Registros EEG en formato GDF", ".gdf")]) 
+        self.__archivosOrigen = list(askopenfilenames(
+            title = 'Choose a file',
+            filetypes = [("Registros EEG en formato GDF", ".gdf")]
+        )) # End askopenfilename 
 
-        # Ver si el usuario selecciono algo
-        if self.__origenArchivo != '':
+        # Ver si el usuario selecciono algo valido
+        if len(self.__archivosOrigen) >= 2 :
+
+            # Construir etiqueta con los nombres de archivos
+            # cargados
+            textoArchivos = 'Datos de entrenamiento EEG: '
+
+            for i in range( len(self.__archivosOrigen) ):
+
+                textoArchivos += os.path.basename(self.__archivosOrigen[i])
+
+                if i < len(self.__archivosOrigen) - 1:
+                    textoArchivos += ", "
 
             # Cambiar view para denotar validacion
             self._view.etiquetaSeccionEEG.config(
-                text='Datos de entrenamiento EEG: ' + os.path.basename(self.__origenArchivo) 
+                text = textoArchivos 
             ) # End config
 
             self._view.etiquetaImagenValidacionDatosEEG.config(  
@@ -107,14 +116,30 @@ class ControllerCrearUsuario(Controller):
             4.2,
             5.5,
             9.03,
-            Model.SEGURIDAD_ALTA,
+            self._seguridadSeleccionada,
             imagen=self.__imagenSeleccionada ):
 
             MessageBox.showinfo(
                 "Usuario registrado",
                 "El usuario se ha registrado exitosamente"
             ) # End showinfo
-            self.__cerrarVentana()
+
+            from ControllerPrincipal import ControllerPrincipal
+            from ViewPrincipal import ViewPrincipal
+
+            # Crear un nuevo view de crear usuario y relacionarlo con un controller
+            viewPrincipal = ViewPrincipal()
+            controllerPrincipal = ControllerPrincipal( 
+                viewPrincipal, 
+                self._model
+            ) # End construct
+
+            try:
+                self._cerrarVentana()
+            except:
+                Tkinter.TclError
+
+            controllerPrincipal.inicializarView()
 
         else:
             MessageBox.showerror(
@@ -130,18 +155,23 @@ class ControllerCrearUsuario(Controller):
     Output: None
     """
     def botonCancelar_Click(self,evento):
-        self.__cerrarVentana()
 
-    """
-    El metodo permite cerrar la ventana actual y destruir el 
-    controller asociado
-    Input:  None
-    Output: None
-    """
-    def __cerrarVentana(self):
-        self._view.ventana.destroy()
-        del self._view
-        del self
+        from ControllerPrincipal import ControllerPrincipal
+        from ViewPrincipal import ViewPrincipal
+
+        # Crear un nuevo view de crear usuario y relacionarlo con un controller
+        viewPrincipal = ViewPrincipal()
+        controllerPrincipal = ControllerPrincipal( 
+            viewPrincipal, 
+            self._model
+        ) # End construct
+
+        try:
+            self._cerrarVentana()
+        except:
+            Tkinter.TclError
+
+        controllerPrincipal.inicializarView()
 
     """
     El metodo es invocado cuando se adquiere el foco en el 
@@ -341,8 +371,8 @@ class ControllerCrearUsuario(Controller):
 
             # Seleccionar imagen, cargarla y recortarla. Mantener en memoria
             self.__imagenSeleccionada = ViewAuxiliar.recortarImagenUsuario(ubicacionImagen)
-            self.__imagenSeleccionada = self.__imagenSeleccionada.resize((80,80))
-            self.__renderImagenSeleccionada = ImageTk.PhotoImage(self.__imagenSeleccionada, master=self._view.ventana)
+            self.__imagenSeleccionada = self.__imagenSeleccionada.resize((147,147))
+            self.__renderImagenSeleccionada = ImageTk.PhotoImage(self.__imagenSeleccionada.resize((80,80)), master=self._view.ventana)
 
             # Reflejar imagen en view
             self._view.etiquetaImagenUsuario.config(image=self.__renderImagenSeleccionada)
@@ -350,113 +380,6 @@ class ControllerCrearUsuario(Controller):
         # En caso que el usuario cancele la operacion
         except AttributeError:
             pass
-
-    """
-    El metodo es invocado cuando se hace clic en cualquier elemento
-    que constituye la opcion de seguridad alta en el view
-    Input:  evento - con la descripcion del evento que la invoco
-    Output: None
-    """
-    def opcionSeguridadAlta_Click(self, evento):
-
-        # Revisar en que opcion de seguridad se encuentra posicionado el usuario
-        opcionSeleccionada = self._view.canvas.coords(self._view.selector)[0]
-
-        # Establecer la nueva seleccion en la seguridad alta
-        self.__cambiarSeleccionOpcion(ControllerCrearUsuario.SEGURIDAD_ALTA, True)
-
-        # Revisar la opcion de seguridad seleccionada y deseleccionarla
-        if opcionSeleccionada == ControllerCrearUsuario.SEGURIDAD_MEDIA:
-            self.__cambiarSeleccionOpcion(ControllerCrearUsuario.SEGURIDAD_MEDIA, False)
-            self._view.canvas.move(self._view.selector, 140,0)
-
-        if opcionSeleccionada == ControllerCrearUsuario.SEGURIDAD_BAJA:
-            self.__cambiarSeleccionOpcion(ControllerCrearUsuario.SEGURIDAD_BAJA, False)
-            self._view.canvas.move(self._view.selector, 280,0)
-
-        self.__seguridadSeleccionada = Model.SEGURIDAD_ALTA
-    
-    """
-    El metodo es invocado cuando se hace clic en cualquier elemento
-    que constituye la opcion de seguridad media en el view
-    Input:  evento - con la descripcion del evento que la invoco
-    Output: None
-    """
-    def opcionSeguridadMedia_Click(self, evento):
-
-        # Revisar en que opcion de seguridad se encuentra posicionado el usuario
-        opcionSeleccionada = self._view.canvas.coords(self._view.selector)[0]
-
-        # Establecer la nueva seleccion en la seguridad media
-        self.__cambiarSeleccionOpcion(ControllerCrearUsuario.SEGURIDAD_MEDIA, True)
-
-        # Revisar la opcion de seguridad seleccionada y deseleccionarla
-        if opcionSeleccionada == ControllerCrearUsuario.SEGURIDAD_BAJA:
-            self._view.canvas.move(self._view.selector, 140,0)
-            self.__cambiarSeleccionOpcion(ControllerCrearUsuario.SEGURIDAD_BAJA, False)
-
-        if opcionSeleccionada == ControllerCrearUsuario.SEGURIDAD_ALTA:
-            self._view.canvas.move(self._view.selector, -140,0)
-            self.__cambiarSeleccionOpcion(ControllerCrearUsuario.SEGURIDAD_ALTA, False)
-
-        self.__seguridadSeleccionada = Model.SEGURIDAD_MEDIA
-
-    """
-    El metodo es invocado cuando se hace clic en cualquier elemento
-    que constituye la opcion de seguridad baja en el view
-    Input:  evento - con la descripcion del evento que la invoco
-    Output: None
-    """
-    def opcionSeguridadBaja_Click(self, evento):
-
-        # Revisar en que opcion de seguridad se encuentra posicionado el usuario
-        opcionSeleccionada = self._view.canvas.coords(self._view.selector)[0]
-
-        # Establecer la nueva seleccion en la seguridad baja
-        self.__cambiarSeleccionOpcion(ControllerCrearUsuario.SEGURIDAD_BAJA, True)
-
-        # Revisar la opcion de seguridad seleccionada y deseleccionarla
-        if opcionSeleccionada == ControllerCrearUsuario.SEGURIDAD_MEDIA:
-            self._view.canvas.move(self._view.selector, -140,0)
-            self.__cambiarSeleccionOpcion(ControllerCrearUsuario.SEGURIDAD_MEDIA, False)
-
-        if opcionSeleccionada == ControllerCrearUsuario.SEGURIDAD_ALTA:
-            self._view.canvas.move(self._view.selector, -280,0)
-            self.__cambiarSeleccionOpcion(ControllerCrearUsuario.SEGURIDAD_ALTA, False)
-    
-        self.__seguridadSeleccionada = Model.SEGURIDAD_BAJA
-
-    """
-    El metodo permite visualmente cambiar la seleccion de las 
-    opciones de seguridad
-    Input:  opcion - el nivel de seguridad a modificar
-            seleccionado - booleano indicando si modificarlo 
-            como seleccionado o deseleccionado
-    Output: None
-    """
-    def __cambiarSeleccionOpcion( self, opcion, seleccionado ):
-
-        # Verificar el color a aplicar a la opcion dependiendo de si
-        # se pretende seleccionar o deseleccionar
-        color = (View.COLOR_SELECTOR if seleccionado else View.COLOR_FONDO)
-
-        # Identificar la opcion de seguridad que recibira el efecto
-        # y aplicarlo
-        if opcion == ControllerCrearUsuario.SEGURIDAD_ALTA:
-            self._view.etiquetaImagenSeguridadAlta.config( bg = color )
-            self._view.etiquetaTituloSeguridadAlta.config( bg = color )
-            self._view.etiquetaDescripcionSeguridadAlta.config( bg = color )
-
-        elif opcion == ControllerCrearUsuario.SEGURIDAD_MEDIA:
-            self._view.etiquetaImagenSeguridadMedia.config( bg = color )
-            self._view.etiquetaTituloSeguridadMedia.config( bg = color )
-            self._view.etiquetaDescripcionSeguridadMedia.config( bg = color )
-
-        elif opcion == ControllerCrearUsuario.SEGURIDAD_BAJA:
-            self._view.etiquetaImagenSeguridadBaja.config( bg = color )
-            self._view.etiquetaTituloSeguridadBaja.config( bg = color )
-            self._view.etiquetaDescripcionSeguridadBaja.config( bg = color )
-        
         
     """
     El metodo permite validar que todos los campos se han llenado

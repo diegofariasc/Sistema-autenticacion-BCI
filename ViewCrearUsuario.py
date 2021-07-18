@@ -54,8 +54,7 @@ class ViewCrearUsuario(View):
 
         # Imagen de usuario
         self.imagenUsuario = Image.open("assets/ViewCrearUsuario/imagenNuevoUsuarioDefault.png") 
-        self.imagenUsuario = self.imagenUsuario.resize((80,80))
-        self.renderUsuario = ImageTk.PhotoImage(self.imagenUsuario, master=self.ventana)
+        self.renderUsuario = ImageTk.PhotoImage(self.imagenUsuario.resize((80,80)), master=self.ventana)
 
         self.etiquetaImagenUsuario = Tkinter.Label( 
             self.canvas, 

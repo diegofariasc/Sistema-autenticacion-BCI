@@ -14,8 +14,32 @@ class ViewIniciado(ViewPanel):
 
         # Crear cada elemento del panel
 
+
+        # Boton para cerrar sesion
+        self.imagenCerrarSesion = Image.open("assets/ViewIniciado/cerrarSesion.png")
+        self.renderCerrarSesion = ImageTk.PhotoImage(self.imagenCerrarSesion, master=self.ventana)
+        self.etiquetaImagenCerrarSesion = Tkinter.Label( 
+            self.canvas, 
+            bg=View.COLOR_CONTRASTE,
+            image=self.renderCerrarSesion,
+            cursor='hand2'
+        ) # End label
+        self.etiquetaImagenCerrarSesion.pack()
+        self.etiquetaImagenCerrarSesion.place(x=25, y=25, height=45, width=45)
+
+        # Etiqueta correspondiente al boton de eliminar usuario
+        self.etiquetaDescripcionCerrarSesion = Tkinter.Label( 
+            self.canvas, 
+            text='Cerrar sesión',
+            bg=View.COLOR_CONTRASTE,
+            fg=View.COLOR_TEXTO_PANEL,
+            font="SegoeUI 11 normal"
+        ) # End label
+        self.etiquetaDescripcionCerrarSesion.pack()
+        self.etiquetaDescripcionCerrarSesion.place(x=10, y=70, height=20, width=75)
+
         # Boton para eliminar un usuario
-        self.imagenEliminarUsuario = Image.open("assets/ViewPrincipal/eliminarUsuario.png")
+        self.imagenEliminarUsuario = Image.open("assets/ViewIniciado/eliminarUsuario.png")
         self.renderEliminarUsuario= ImageTk.PhotoImage(self.imagenEliminarUsuario, master=self.ventana)
         self.etiquetaImagenEliminarUsuario = Tkinter.Label( 
             self.canvas, 
@@ -24,7 +48,7 @@ class ViewIniciado(ViewPanel):
             cursor='hand2'
         ) # End label
         self.etiquetaImagenEliminarUsuario.pack()
-        self.etiquetaImagenEliminarUsuario.place(x=25, y=25, height=45, width=45)
+        self.etiquetaImagenEliminarUsuario.place(x=110, y=25, height=45, width=45)
 
         # Etiqueta correspondiente al boton de eliminar usuario
         self.etiquetaDescripcionEliminarUsuario = Tkinter.Label( 
@@ -35,7 +59,8 @@ class ViewIniciado(ViewPanel):
             font="SegoeUI 11 normal"
         ) # End label
         self.etiquetaDescripcionEliminarUsuario.pack()
-        self.etiquetaDescripcionEliminarUsuario.place(x=10, y=70, height=20, width=75)
+        self.etiquetaDescripcionEliminarUsuario.place(x=95, y=70, height=20, width=75)
+
 
         # Imagen de usuario
         self.imagenUsuario = Image.open("recortada.png")   # Reemplazar con BD
@@ -62,7 +87,7 @@ class ViewIniciado(ViewPanel):
         self.etiquetaNombreUsuario.place(x=80, y=107, height=20, width=View.LARGO)
 
         # Etiqueta con la fecha de registro del usuario
-        self.etiquetaRegistro= Tkinter.Label( 
+        self.etiquetaFechaRegistro= Tkinter.Label( 
             self.canvas, 
             text='Registrado el 01 de enero de 2021',
             bg=View.COLOR_FONDO,
@@ -70,8 +95,8 @@ class ViewIniciado(ViewPanel):
             font="SegoeUI 12 normal",
             anchor='w'
         ) # End label
-        self.etiquetaRegistro.pack()
-        self.etiquetaRegistro.place(x=80, y=127, height=20, width=View.LARGO)
+        self.etiquetaFechaRegistro.pack()
+        self.etiquetaFechaRegistro.place(x=80, y=127, height=20, width=View.LARGO)
 
         # Imagen de muestras
         self.imagenMuestras = Image.open("assets/ViewIniciado/muestras.png")
@@ -238,19 +263,6 @@ class ViewIniciado(ViewPanel):
         self.etiquetaDescripcionSeguridadAlta.pack()
         self.etiquetaDescripcionSeguridadAlta.place(x=360, y=335, height=20, width=120)
 
-        # Etiqueta del programa
-        self.etiquetaPrograma= Tkinter.Label( 
-            self.canvas, 
-            text='Programa de honores. Universidad de las Américas Puebla' +
-            '           * Configuración recomendada',
-            bg=View.COLOR_FONDO,
-            fg=ViewAuxiliar.obtenerColor(134,134,134),
-            font="SegoeUI 9 italic",
-            anchor='w'
-        ) # End label
-        self.etiquetaPrograma.pack()
-        self.etiquetaPrograma.place(x=10, y=390, height=20, width=View.LARGO)
-
         # Crear panel para mostrar seleccion de nivel de seguridad
         self.selector = self.canvas.create_rectangle( 
             215, 215, 345, 360, 
@@ -258,3 +270,26 @@ class ViewIniciado(ViewPanel):
             outline=View.COLOR_SELECTOR
         ) # End create_rectangle
         self.canvas.tag_raise(self.selector)
+
+    def establecerListeners( self, controller ):
+
+        # Controles para botones de seguridad alta 
+        self.etiquetaImagenSeguridadAlta.bind("<Button-1>", controller.opcionSeguridadAlta_Click)
+        self.etiquetaTituloSeguridadAlta.bind("<Button-1>", controller.opcionSeguridadAlta_Click)
+        self.etiquetaDescripcionSeguridadAlta.bind("<Button-1>", controller.opcionSeguridadAlta_Click)
+
+        # Controles para botones de seguridad media 
+        self.etiquetaImagenSeguridadMedia.bind("<Button-1>", controller.opcionSeguridadMedia_Click)
+        self.etiquetaTituloSeguridadMedia.bind("<Button-1>", controller.opcionSeguridadMedia_Click)
+        self.etiquetaDescripcionSeguridadMedia.bind("<Button-1>", controller.opcionSeguridadMedia_Click)
+
+        # Controles para botones de seguridad baja 
+        self.etiquetaImagenSeguridadBaja.bind("<Button-1>", controller.opcionSeguridadBaja_Click)
+        self.etiquetaTituloSeguridadBaja.bind("<Button-1>", controller.opcionSeguridadBaja_Click)
+        self.etiquetaDescripcionSeguridadBaja.bind("<Button-1>", controller.opcionSeguridadBaja_Click)
+
+        # Control para eliminar usuario
+        self.etiquetaImagenEliminarUsuario.bind("<Button-1>", controller.etiquetaImagenEliminarUsuario_Click)
+        
+        # Control para cerrar sesion 
+        self.etiquetaImagenCerrarSesion.bind("<Button-1>", controller.etiquetaImagenCerrarSesion_Click)

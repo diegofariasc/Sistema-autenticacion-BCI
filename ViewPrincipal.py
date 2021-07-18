@@ -1,8 +1,9 @@
+from ViewAuxiliar   import ViewAuxiliar
+from ViewPanel      import ViewPanel
+from View           import View
+from PIL            import ImageTk, Image
+
 import tkinter as Tkinter
-from ViewAuxiliar import ViewAuxiliar
-from ViewPanel import ViewPanel
-from View import View
-from PIL import ImageTk, Image
 
 # La clase representa la vista principal
 class ViewPrincipal(ViewPanel):
@@ -40,6 +41,33 @@ class ViewPrincipal(ViewPanel):
         self.etiquetaDescripcionNuevoUsuario.pack()
         self.etiquetaDescripcionNuevoUsuario.place(x=10, y=70, height=20, width=75)
 
+
+        # Boton para abortar inicio
+        self.imagenAbortarInicio = Image.open("assets/ViewPrincipal/abortarInicio.png")
+        self.renderAbortarInicio = ImageTk.PhotoImage(self.imagenAbortarInicio, master=self.ventana)
+
+        self.etiquetaImagenAbortarInicio = Tkinter.Label( 
+            self.canvas, 
+            bg=View.COLOR_CONTRASTE,
+            image=self.renderAbortarInicio,
+            cursor='hand2'
+        ) # End label
+
+        self.etiquetaImagenAbortarInicio.pack()
+        self.etiquetaImagenAbortarInicio.place(x=25, y=25, height=45, width=45)
+
+        # Etiqueta correspondiente al boton de crear usuario
+        self.etiquetaDescripcionAbortarInicio = Tkinter.Label( 
+            self.canvas, 
+            text='Abortar inicio',
+            bg=View.COLOR_CONTRASTE,
+            fg=View.COLOR_TEXTO_PANEL,
+            font="SegoeUI 11 normal"
+        ) # End label
+        self.etiquetaDescripcionAbortarInicio.pack()
+        self.etiquetaDescripcionAbortarInicio.place(x=10, y=70, height=20, width=75)
+
+
         # Etiqueta descriptiva de la labor en la ventana
         self.etiquetaDescripcionVentana= Tkinter.Label( 
             self.canvas, 
@@ -51,18 +79,10 @@ class ViewPrincipal(ViewPanel):
         self.etiquetaDescripcionVentana.pack()
         self.etiquetaDescripcionVentana.place(x=0, y=110, height=20, width=View.LARGO)
 
-        # Recorte temporal
-        ViewAuxiliar.recortarImagenUsuario("assets/ViewPrincipal/imagenUsuarioDefault.jpg")
-
         # Imagen de usuario
-        self.imagenUsuario = Image.open("recortada.png")   # Reemplazar con BD
-        self.imagenUsuario = self.imagenUsuario.resize((150,150))
-        self.renderUsuario = ImageTk.PhotoImage(self.imagenUsuario, master=self.ventana)
-
         self.etiquetaImagenUsuario = Tkinter.Label( 
             self.canvas, 
-            bg=View.COLOR_FONDO,
-            image=self.renderUsuario,
+            bg=View.COLOR_FONDO
         ) # End label
 
         self.etiquetaImagenUsuario.pack()
@@ -71,6 +91,8 @@ class ViewPrincipal(ViewPanel):
         # Imagen de moverse a la derecha
         self.imagenDerecha = Image.open("assets/ViewPrincipal/moverseDerecha.png")
         self.renderDerecha = ImageTk.PhotoImage(self.imagenDerecha, master=self.ventana)
+        self.imagenDerechaDesactivado = Image.open("assets/ViewPrincipal/moverseDerechaDesactivado.png")
+        self.renderDerechaDesactivado = ImageTk.PhotoImage(self.imagenDerechaDesactivado, master=self.ventana)
 
         self.etiquetaImagenDerecha = Tkinter.Label( 
             self.canvas, 
@@ -78,13 +100,13 @@ class ViewPrincipal(ViewPanel):
             image=self.renderDerecha,
             cursor='hand2'
         ) # End label
-
-        self.etiquetaImagenDerecha.pack()
         self.etiquetaImagenDerecha.place(x=370, y=178, height=70, width=70)
 
         # Imagen de moverse a la izquierda
         self.imagenIzquierda = Image.open("assets/ViewPrincipal/moverseIzquierda.png")
         self.renderIzquierda = ImageTk.PhotoImage(self.imagenIzquierda, master=self.ventana)
+        self.imagenIzquierdaDesactivado = Image.open("assets/ViewPrincipal/moverseIzquierdaDesactivado.png")
+        self.renderIzquierdaDesactivado = ImageTk.PhotoImage(self.imagenIzquierdaDesactivado, master=self.ventana)
 
         self.etiquetaImagenIzquierda = Tkinter.Label( 
             self.canvas, 
@@ -92,8 +114,6 @@ class ViewPrincipal(ViewPanel):
             image=self.renderIzquierda,
             cursor='hand2'
         ) # End label
-
-        self.etiquetaImagenIzquierda.pack()
         self.etiquetaImagenIzquierda.place(x=110, y=178, height=70, width=70)
 
         # Etiqueta con el nombre del usuario
@@ -104,19 +124,18 @@ class ViewPrincipal(ViewPanel):
             fg=ViewAuxiliar.obtenerColor(64,64,64),
             font="SegoeUI 16 normal"
         ) # End label
-        self.etiquetaNombreUsuario.pack()
         self.etiquetaNombreUsuario.place(x=0, y=300, height=20, width=View.LARGO)
 
-        # Etiqueta con el nombre del usuario
-        self.etiquetaNombreUsuario= Tkinter.Label( 
+        # Etiqueta con la fecha de registro
+        self.etiquetaFechaRegistro = Tkinter.Label( 
             self.canvas, 
             text='Registrado el 01 de enero de 2021',
             bg=View.COLOR_FONDO,
             fg=ViewAuxiliar.obtenerColor(94,94,94),
             font="SegoeUI 12 normal"
         ) # End label
-        self.etiquetaNombreUsuario.pack()
-        self.etiquetaNombreUsuario.place(x=0, y=320, height=20, width=View.LARGO)
+        self.etiquetaFechaRegistro.pack()
+        self.etiquetaFechaRegistro.place(x=0, y=320, height=20, width=View.LARGO)
 
         # Boton de escaneo EEG
         self.imagenEscaneoEEG = Image.open("assets/ViewPrincipal/escaneoEEG.png")
@@ -152,5 +171,48 @@ class ViewPrincipal(ViewPanel):
         self.botonContrasena.pack()
         self.botonContrasena.place(x=280, y=345, height=28, width=135)
 
+        # Campo contrasena
+        self.campoContrasena = Tkinter.Entry(
+            self.canvas, 
+            width = 17,
+            highlightbackground=View.COLOR_FONDO,
+            font="SegoeUI 11 italic",
+            fg=ViewAuxiliar.obtenerColor(124,124,124)
+        ) # End entry
+        self.campoContrasena.insert(0, 'Contraseña')
+        
+        # Boton para ingresar con contrasena
+        self.imagenIngresar = Image.open("assets/ViewPrincipal/ingresar.png")
+        self.renderIngresar = ImageTk.PhotoImage(self.imagenIngresar, master=self.ventana)
+
+        self.etiquetaImagenIngresar = Tkinter.Label( 
+            self.canvas, 
+            bg=View.COLOR_FONDO,
+            image=self.renderIngresar,
+            cursor='hand2'
+        ) # End label
+
+        # Boton para ingresar volver a la seleccion de metodo de ingreso
+        self.imagenVolverMetodoIngreso = Image.open("assets/ViewPrincipal/regresarMetodoIngreso.png")
+        self.renderVolverMetodoIngreso = ImageTk.PhotoImage(self.imagenVolverMetodoIngreso, master=self.ventana)
+
+        self.etiquetaVolverMetodoIngreso = Tkinter.Label( 
+            self.canvas, 
+            bg=View.COLOR_FONDO,
+            image=self.renderVolverMetodoIngreso,
+            cursor='hand2'
+        ) # End label
+
+
+
     def establecerListeners( self, controller ):
         self.etiquetaImagenNuevoUsuario.bind("<Button-1>", controller.etiquetaImagenNuevoUsuario_Click)
+        self.etiquetaImagenDerecha.bind("<Button-1>", controller.etiquetaImagenDerecha_Click)
+        self.etiquetaImagenIzquierda.bind("<Button-1>", controller.etiquetaImagenIzquierda_Click)
+        self.etiquetaImagenAbortarInicio.bind("<Button-1>", controller.etiquetaImagenAbortarInicio_Click)
+        self.botonContrasena.bind("<Button-1>", controller.botonContrasena_Click)
+        self.campoContrasena.bind("<FocusIn>", controller.campoContrasena_Focus)
+        self.campoContrasena.bind("<FocusOut>", controller.campoContrasena_LostFocus)
+        self.etiquetaVolverMetodoIngreso.bind("<Button-1>", controller.etiquetaVolverMetodoIngreso_Click)
+        self.etiquetaImagenIngresar.bind("<Button-1>", controller.etiquetaImagenIngresar_Click)
+        

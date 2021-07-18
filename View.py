@@ -27,10 +27,16 @@ class View(metaclass=abc.ABCMeta):
             highlightthickness=0
         ) # End canvas
         self.canvas.pack()
+        self.ventana.resizable(False, False)
+
+        tamanoPantallaX =self.ventana.winfo_screenwidth()
+        tamanoPantallaY =self.ventana.winfo_screenheight()
+        posicionVentanaX = (tamanoPantallaX-View.LARGO)/2
+        posicionVentanaY = (tamanoPantallaY-View.ALTO)/2 -View.ALTO * 0.2
 
         # Parametros generales de la ventana
-        self.ventana.geometry("%sx%s" % (View.LARGO, View.ALTO))
-        self.ventana.title("Sistema de autenticación - Nombre del usuario")
+        self.ventana.geometry('%dx%d+%d+%d' % (View.LARGO, View.ALTO,posicionVentanaX,posicionVentanaY))
+        self.ventana.title("Sistema de autenticación")
 
          # Etiqueta del programa
         self.etiquetaPrograma= Tkinter.Label( 

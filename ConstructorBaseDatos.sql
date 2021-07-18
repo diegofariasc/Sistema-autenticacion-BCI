@@ -22,13 +22,25 @@ CREATE TABLE USUARIO(
     nivelSeguridad = 'intermedio' OR
     nivelSeguridad = 'maximo'),
 
-    PRIMARY KEY (id));
+    PRIMARY KEY (id)
+); -- End USUARIO
+
+CREATE TABLE EXPERIMENTO(
+    usuario             INTEGER     NOT NULL,
+    numeroExperimento   INTEGER     NOT NULL,
+    dimension           INTEGER     NOT NULL,
+    valor               INTEGER     NOT NULL,
+
+    FOREIGN KEY (usuario) REFERENCES USUARIO(id),
+    PRIMARY KEY (usuario, numeroExperimento, dimension)
+); 
+
 
 DELIMITER ;;
 CREATE TRIGGER `registrarFecha` 
 BEFORE INSERT ON USUARIO 
 FOR EACH ROW
 BEGIN
-    SET NEW.fechaRegistro = NOW();
+    SET NEW.fechaRegistro = CURDATE();
 END;;
 DELIMITER ;

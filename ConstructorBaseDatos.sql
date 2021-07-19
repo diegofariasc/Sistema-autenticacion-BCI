@@ -25,10 +25,10 @@ CREATE TABLE EXPERIMENTO (
     
     usuario             INTEGER         NOT NULL,
     numeroExperimento   INTEGER         NOT NULL,
-    dimension           INTEGER         NOT NULL,
-    valor               DOUBLE          NOT NULL,
+    canal               INTEGER         NOT NULL,
     tipo                VARCHAR(14)     NOT NULL,
-
+    valor               DOUBLE          NOT NULL,
+    
     CONSTRAINT tipoExperimentoValido CHECK (
         tipo = 'mano izquierda' OR 
         tipo = 'mano derecha' OR
@@ -37,7 +37,7 @@ CREATE TABLE EXPERIMENTO (
     ), -- End constraint
 
     FOREIGN KEY (usuario) REFERENCES USUARIO(id),
-    PRIMARY KEY (usuario, numeroExperimento, dimension)
+    PRIMARY KEY (usuario, numeroExperimento, canal, tipo)
 ); 
 
 

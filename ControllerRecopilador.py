@@ -155,7 +155,13 @@ class ControllerRecopilador(Controller):
 
         # Notificar finalizacion
         self.__cambiarMovimiento(Movimiento.FINALIZADO)
-        self._model.procesarSenal(senal_C1, senal_C2)
+
+        # Procesar senal e insertarla en la base de datos
+        #procesada_C1, procesada_C2 = self._model.procesarSenal(senal_C1, senal_C2)
+        #self._model.insertarExperimentos(procesada_C1, Movimiento.TIPO_C1)
+        #self._model.insertarExperimentos(procesada_C2, Movimiento.TIPO_C2)
+        datos = self._model.obtenerExperimentos(1,Movimiento.TIPO_C1)
+        self._model.obtenerParametrosAutenticacion(datos)
 
         self._view.etiquetaDescripcionMovimiento.config( 
             fg=ViewAuxiliar.obtenerColor(46,204,113),

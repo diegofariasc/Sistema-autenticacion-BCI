@@ -10,10 +10,6 @@ CREATE TABLE USUARIO(
     nombre                  VARCHAR(255)    NOT NULL,
     contrasena              VARCHAR(255)    NOT NULL,
     fechaRegistro           DATE            NOT NULL, 
-    media                   DOUBLE          NOT NULL,
-    desviacion              DOUBLE          NOT NULL,
-    fronteraCorrelacion     DOUBLE          NOT NULL,
-    fronteraGaussiana       DOUBLE          NOT NULL,
     nivelSeguridad          VARCHAR(10)     NOT NULL,
     imagen                  BLOB,
     
@@ -25,11 +21,20 @@ CREATE TABLE USUARIO(
     PRIMARY KEY (id)
 ); -- End USUARIO
 
-CREATE TABLE EXPERIMENTO(
-    usuario             INTEGER     NOT NULL,
-    numeroExperimento   INTEGER     NOT NULL,
-    dimension           INTEGER     NOT NULL,
-    valor               INTEGER     NOT NULL,
+CREATE TABLE EXPERIMENTO (
+    
+    usuario             INTEGER         NOT NULL,
+    numeroExperimento   INTEGER         NOT NULL,
+    dimension           INTEGER         NOT NULL,
+    valor               DOUBLE          NOT NULL,
+    tipo                VARCHAR(14)     NOT NULL,
+
+    CONSTRAINT tipoExperimentoValido CHECK (
+        tipo = 'mano izquierda' OR 
+        tipo = 'mano derecha' OR
+        tipo = 'pie izquierdo' OR
+        tipo = 'pie derecho'
+    ), -- End constraint
 
     FOREIGN KEY (usuario) REFERENCES USUARIO(id),
     PRIMARY KEY (usuario, numeroExperimento, dimension)

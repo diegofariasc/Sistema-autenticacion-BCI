@@ -191,10 +191,10 @@ class ControllerPrincipal(Controller):
         datosUsuario = self._model.obtenerDatosUsuario(self.__usuarioSeleccionado, porIndice)
 
         # Ajustar imagen a tamano del contenedor 
-        datosUsuario[9] = datosUsuario[9].resize((147,147))
+        datosUsuario[5] = datosUsuario[5].resize((147,147))
 
         # Desplegar imagen en view
-        self.renderUsuario = ImageTk.PhotoImage(datosUsuario[9], master= self._view.ventana)
+        self.renderUsuario = ImageTk.PhotoImage(datosUsuario[5], master= self._view.ventana)
         self._view.etiquetaImagenUsuario.config(image=self.renderUsuario)
         self._view.etiquetaNombreUsuario.config(text=datosUsuario[1])
 

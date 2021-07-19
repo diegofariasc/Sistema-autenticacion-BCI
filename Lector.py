@@ -45,7 +45,7 @@ class Lector:
             callbackIniciar (function)  : Funcion anonima llamada en cuanto se inicia el experimento (opcional)
     Output: numpy array                 : Datos recopilados
     """
-    def recopilarDatosExperimento(self, duracion, callbackIniciar = lambda :True ):
+    def recopilarDatosExperimento(self, duracion, segundosRemover=1, callbackIniciar = lambda :True ):
 
         # Preparar e iniciar lectura
         self.__casco.prepare_session()              # Preparar sesion 
@@ -59,18 +59,18 @@ class Lector:
         self.__casco.release_session()              # Liberar sesion
 
         # Devolver datos de acuerdo a fs y canales
-        return datos[self.__canales, : self.__fs * duracion]
+        return datos[self.__canales, (self.__fs * segundosRemover) : self.__fs * duracion - (self.__fs * segundosRemover)]
 
 
 
-# Prueba de la clase con exp de 2 segundos
-# con canales 1-3
-def main():
+# # Prueba de la clase con exp de 2 segundos
+# # con canales 1-3
+# def main():
 
-    lector = Lector(Lector.CYTON, [1,2,3], puerto="COM3")
-    datos = lector.recopilarDatosExperimento(5)
-    print("Forma:", shape(datos))
-    print(datos)
+#     lector = Lector(Lector.SIMULADOR, [1,2,3], puerto="")
+#     datos = lector.recopilarDatosExperimento(5)
+#     print("Forma:", shape(datos))
+#     print(datos)
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

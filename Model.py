@@ -1,12 +1,18 @@
 import mysql.connector
 import io
-from PIL import Image
+
+from PIL            import Image
+from numpy          import array, transpose, shape, std, mean
+from scipy.signal   import butter, lfilter
 
 class Model():
 
-    SEGURIDAD_ALTA = 'maximo' 
-    SEGURIDAD_MEDIA = 'intermedio' 
-    SEGURIDAD_BAJA = 'reducido' 
+    SEGURIDAD_ALTA      = 'maximo' 
+    SEGURIDAD_MEDIA     = 'intermedio' 
+    SEGURIDAD_BAJA      = 'reducido' 
+    BANDAS_GENERALES_C1 = [(36, 43), (4,8), (23, 35), (20, 23), (18, 22)]
+    BANDAS_GENERALES_C2 = [(36, 43), (4,8), (23, 35), (20, 23), (18, 22)]
+    FUNCIONES           = [std, mean]
 
     # Constructor
     def __init__( self ):
@@ -26,8 +32,7 @@ class Model():
             con los datos del usuario a insertar
     Output: bool indicando si el proceso se desarrollo sin fallos
     """
-    def insertarUsuario( self, nombre, contrasena, media, desviacion, 
-                        fronteraCorrelacion, fronteraGaussiana, nivelSeguridad, imagen=None):
+    def insertarUsuario( self, nombre, contrasena, nivelSeguridad, imagen=None):
 
         try:
 
@@ -41,12 +46,9 @@ class Model():
 
 
             # Preparar instruccion y tupla
-            instruction =   "INSERT INTO USUARIO ( " + \
-                            "nombre, contrasena, media, desviacion, " + \
-                            "fronteraCorrelacion, fronteraGaussiana, nivelSeguridad, imagen) " + \
-                            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-            nuevaTupla = (  nombre, contrasena, media, desviacion, 
-                            fronteraCorrelacion, fronteraGaussiana, nivelSeguridad, imagen )
+            instruction =   "INSERT INTO USUARIO (nombre, contrasena, nivelSeguridad, imagen) " + \
+                            "VALUES (%s, %s, %s, %s)"
+            nuevaTupla = ( nombre, contrasena, nivelSeguridad, imagen )
 
             # Ejecutar y hacer commit
             cursor  = self.__connection.cursor()
@@ -57,7 +59,8 @@ class Model():
             cursor.close()
             return True
 
-        except:
+        except Exception as e:
+            print(e)
             # Operacion fallida -> rollback
             self.__connection.rollback()
             cursor.close()
@@ -170,16 +173,16 @@ class Model():
         result = list(result)
 
         # Verificar si el usuario no tiene imagen
-        if result[9] == None:
+        if result[5] == None:
             
             # Cargar BLOB de imagen predeterminada
             with open("assets/ViewPrincipal/imagenUsuarioDefault.png", "rb") as image:
                 f = image.read()
                 b = bytearray(f)
-                result[9] = b
+                result[5] = b
 
         # Convertir BLOB de imagen en objeto PIL Image
-        result[9] = Image.open(io.BytesIO(result[9]))
+        result[5] = Image.open(io.BytesIO(result[5]))
 
         return result
 
@@ -195,3 +198,45 @@ class Model():
         result = cursor.fetchall()
         return len(result) == 1
 
+
+    def procesarSenal(self, senal_C1, senal_C2):
+
+        # Convertir a numpy array y transponer
+        # para adquirir la forma estandar de la senal
+        senal_C1 = array(senal_C1)
+        senal_C2 = array(senal_C2)
+        print("C1:", shape(senal_C1), "C2:", shape(senal_C2))
+        senalTranspuesta_C1 = transpose(senal_C1, (1, 2, 0))
+        senalTranspuesta_C2 = transpose(senal_C2, (1, 2, 0))
+        print("C1:", shape(senalTranspuesta_C1), "C2:", shape(senalTranspuesta_C2))
+
+        # Filtrar en las bandas generales
+        senalFiltrada_C1 = self.__filtrar(senalTranspuesta_C1, Model.BANDAS_GENERALES_C1)
+        senalFiltrada_C2 = self.__filtrar(senalTranspuesta_C2, Model.BANDAS_GENERALES_C2)
+        print("C1:", shape(senalFiltrada_C1), "C2:", shape(senalFiltrada_C2))
+
+        # Extraer caracteristicas
+        caracteristicas_C1 = self.__extraerCaracteristicas(senalFiltrada_C1, Model.FUNCIONES)
+        caracteristicas_C2 = self.__extraerCaracteristicas(senalFiltrada_C2, Model.FUNCIONES)
+        print("C1:", shape(caracteristicas_C1), "C2:", shape(caracteristicas_C2))
+        
+
+    def __filtrar (self, datos, frecuencias, Fs=250):
+
+        # Iterar sobre cada frecuencia
+        for f_inf, f_sup in frecuencias:
+            
+            # Diseno del filtro
+            b, a = butter(4, [f_inf / (Fs / 2), f_sup / (Fs / 2)], btype='bandpass')
+            datos = lfilter(b, a, datos, 1)
+
+        return datos
+
+    def __extraerCaracteristicas (self, datos, funciones, canales=[1,2,3]):
+        
+        # Extraer cada caracteristica en funciones sobre la segunda dimension
+        return array( [[[ 
+            funcion( [datos[canal - 1][j][k] 
+                for j in range( shape(datos)[1])])
+                for k in range( shape(datos)[2])]
+                for canal in canales] for funcion in funciones])

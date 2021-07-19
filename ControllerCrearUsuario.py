@@ -112,10 +112,6 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
         if  self._model.insertarUsuario(
             self._view.campoNombre.get(),
             self._view.campoContrasena.get(),
-            3.15,
-            4.2,
-            5.5,
-            9.03,
             self._seguridadSeleccionada,
             imagen=self.__imagenSeleccionada ):
 
@@ -367,7 +363,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
 
         try:
             # Lanzar cuadro para seleccion de imagen
-            ubicacionImagen = askopenfilename(filetypes=[("Imagenes", ".jpg")]) 
+            ubicacionImagen = askopenfilenames(filetypes=[("Imagenes", ".jpg")]) 
 
             # Seleccionar imagen, cargarla y recortarla. Mantener en memoria
             self.__imagenSeleccionada = ViewAuxiliar.recortarImagenUsuario(ubicacionImagen)

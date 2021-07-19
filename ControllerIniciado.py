@@ -23,10 +23,10 @@ class ControllerIniciado(ControllerSelectorSeguridad):
         datosUsuario = self._model.obtenerDatosUsuario(self.__idUsuario, False)
 
         # Ajustar imagen a tamano del contenedor 
-        datosUsuario[9] = datosUsuario[9].resize((45,45))
+        datosUsuario[5] = datosUsuario[5].resize((45,45))
 
         # Desplegar imagen en view
-        self.renderUsuario = ImageTk.PhotoImage(datosUsuario[9], master= self._view.ventana)
+        self.renderUsuario = ImageTk.PhotoImage(datosUsuario[5], master= self._view.ventana)
         self._view.etiquetaImagenUsuario.config(image=self.renderUsuario)
         self._view.etiquetaNombreUsuario.config(text=datosUsuario[1])
 
@@ -38,11 +38,11 @@ class ControllerIniciado(ControllerSelectorSeguridad):
         ) # End config
         
         # Mostrar el nivel de seguridad seleccionado
-        if datosUsuario[8] == Model.SEGURIDAD_ALTA:
+        if datosUsuario[4] == Model.SEGURIDAD_ALTA:
             super().opcionSeguridadBaja_Click(None)
-        elif datosUsuario[8] == Model.SEGURIDAD_MEDIA:
+        elif datosUsuario[4] == Model.SEGURIDAD_MEDIA:
             super().opcionSeguridadMedia_Click(None)
-        elif datosUsuario[8] == Model.SEGURIDAD_BAJA:
+        elif datosUsuario[4] == Model.SEGURIDAD_BAJA:
             super().opcionSeguridadBaja_Click(None)
 
         self._view.establecerListeners(self)

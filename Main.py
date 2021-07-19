@@ -1,3 +1,4 @@
+from Movimiento import Movimiento
 from ViewPrincipal import ViewPrincipal
 from ControllerPrincipal import ControllerPrincipal
 from Model import Model
@@ -9,20 +10,28 @@ def main():
     # Eliminar el codigo fuente una vez en memoria
     # remove(path.basename(__file__))
 
-    # Construir interfaz principal
-    viewPrincipal = ViewPrincipal()
+    # # Construir interfaz principal
+    # viewPrincipal = ViewPrincipal()
 
-    # Construir model
-    model = Model()
+    # # Construir model
+    # model = Model()
 
-    # Relacionar interfaz principal con el controller y el model e inicializarla
-    if len(sys.argv) == 3 and sys.argv[1] == 'aut':
+    # # Relacionar interfaz principal con el controller y el model e inicializarla
+    # if len(sys.argv) == 3 and sys.argv[1] == 'aut':
         
-        # Si el view debe tener un usuario seleccionado de antemano
-        controllerViewPrincipal = ControllerPrincipal( viewPrincipal,model, seleccionado=int(sys.argv[2]) )
-    else:
-        controllerViewPrincipal = ControllerPrincipal( viewPrincipal,model)
+    #     # Si el view debe tener un usuario seleccionado de antemano
+    #     controllerViewPrincipal = ControllerPrincipal( viewPrincipal,model, seleccionado=int(sys.argv[2]) )
+    # else:
+    #     controllerViewPrincipal = ControllerPrincipal( viewPrincipal,model)
 
-    controllerViewPrincipal.inicializarView()
+    # controllerViewPrincipal.inicializarView()
+
+    from ControllerRecopilador import ControllerRecopilador
+    from ViewRecopilador import ViewRecopilador
+    viewRecopilador = ViewRecopilador()
+    model = Model()
+    controllerViewRecopilador = ControllerRecopilador( viewRecopilador, model )
+    controllerViewRecopilador.inicializarView()
+    
 
 main()

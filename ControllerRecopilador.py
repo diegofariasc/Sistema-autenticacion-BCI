@@ -1,16 +1,23 @@
-from time           import sleep
-from Controller     import Controller
-from Movimiento     import Movimiento
-from Lector         import Lector
-from random         import randint, shuffle
-from threading      import Thread
-from ViewAuxiliar   import ViewAuxiliar
+from time               import process_time, sleep
+from Controller         import Controller
+from Movimiento         import Movimiento
+from Lector             import Lector
+from random             import randint, shuffle
+from threading          import Thread
+from ViewAuxiliar       import ViewAuxiliar
+from tkinter            import messagebox as MessageBox
+from ViewIniciado       import ViewIniciado
+from ControllerIniciado import ControllerIniciado
+
+import tkinter as Tkinter
 
 class ControllerRecopilador(Controller):
 
 
-    def __init__(self, view, model):
+    def __init__(self, view, model, viewRaiz, controllerRaiz):
         super().__init__(view,model)
+        self.__viewRaiz = viewRaiz
+        self.__controllerRaiz = controllerRaiz
 
 
     def __cambiarMovimiento(self, movimiento):
@@ -113,78 +120,182 @@ class ControllerRecopilador(Controller):
 
             # Cambiar texto
             self._view.etiquetaDescripcionMovimiento.config(
-                text="LISTO"
+                text="LISTO, ESPERE..."
             ) # End config
 
-    def conducirExperimento(self, tareas, duracionExperimentos):
+    def conducirExperimento(self, tareas, duracionExperimentos, exp_conservar, callback):
 
         # Crear un lector
         lector = Lector(Lector.SIMULADOR,[1,2,3],puerto="")
         
         # Inicializar colecciones de datos
-        from numpy import ones
-        senal_C1 = ones((5,3,500)) #[]
-        senal_C2 = ones((5,3,500))#[]
+        senal_C1 = []
+        senal_C2 = []
 
-        # # Preparar al usuario por 5 segundos
-        # self.__cambiarMovimiento(Movimiento.PREPARACION)
-        # sleep(5)
+        # Preparar al usuario por 5 segundos
+        self.__cambiarMovimiento(Movimiento.PREPARACION)
+        sleep(5)
 
-        # # Realizar cada tarea solicitada
-        # for tarea in tareas:
+        # Realizar cada tarea solicitada
+        for tarea in tareas:
 
-        #     # Cambiar a reposo
-        #     # Nota: Se usa randint para garantizar que el tiempo
-        #     # de reposo sea aleatorio, aunque el valor asignado por randint
-        #     # no es el reposo final. El lector agrega tiempo dada la demora
-        #     # en conectar con el casco
-        #     self.__cambiarMovimiento(Movimiento.REPOSO)
-        #     sleep(randint(3, 5))
+            # Cambiar a reposo
+            # Nota: Se usa randint para garantizar que el tiempo
+            # de reposo sea aleatorio, aunque el valor asignado por randint
+            # no es el reposo final. El lector agrega tiempo dada la demora
+            # en conectar con el casco
+            self.__cambiarMovimiento(Movimiento.REPOSO)
+            sleep(randint(3, 5))
 
-        #     # Iniciar la recopilacion de experimentos
-        #     datosExperimento = lector.recopilarDatosExperimento(
-        #         duracionExperimentos, 
-        #         callbackIniciar=
-        #         lambda tipoTarea=tarea : self.__cambiarMovimiento(tipoTarea)
-        #     ) # End recopilarDatosExperimento
+            # Iniciar la recopilacion de experimentos
+            datosExperimento = lector.recopilarDatosExperimento(
+                duracionExperimentos, 
+                callbackIniciar=
+                lambda tipoTarea=tarea : self.__cambiarMovimiento(tipoTarea)
+            ) # End recopilarDatosExperimento
 
-        #     if tarea == Movimiento.MANO_IZQUIERDA:
-        #         senal_C1.append(datosExperimento)
-        #     if tarea == Movimiento.MANO_IZQUIERDA:
-        #         senal_C2.append(datosExperimento)
+            if tarea == Movimiento.MANO_IZQUIERDA:
+                senal_C1.append(datosExperimento)
+            if tarea == Movimiento.MANO_IZQUIERDA:
+                senal_C2.append(datosExperimento)
 
         # Notificar finalizacion
         self.__cambiarMovimiento(Movimiento.FINALIZADO)
-
-        # Procesar senal e insertarla en la base de datos
-        #procesada_C1, procesada_C2 = self._model.procesarSenal(senal_C1, senal_C2)
-        #self._model.insertarExperimentos(procesada_C1, Movimiento.TIPO_C1)
-        #self._model.insertarExperimentos(procesada_C2, Movimiento.TIPO_C2)
-        datos = self._model.obtenerExperimentos(1,Movimiento.TIPO_C1)
-        self._model.obtenerParametrosAutenticacion(datos)
-
         self._view.etiquetaDescripcionMovimiento.config( 
             fg=ViewAuxiliar.obtenerColor(46,204,113),
         ) # End config
 
+        # VALORES ALEATORIOS -- PRUEBA --
+        from numpy.random import rand
+        senal_C1 = rand(5,3,500)
+        senal_C2 = rand(5,3,500)
 
-    def recopilarDatosEntrenamiento(self, _):
+        # Procesar la senal obtenida
+        procesada_C1, procesada_C2 = self._model.procesarSenal(senal_C1, senal_C2, exp_conservar)
+        sleep(3)
+        callback(procesada_C1, procesada_C2)
+
+
+    # Funcion auxiliar para enviar a la base de datos la informacion recopilada 
+    def __almacenarDatosRecopilados(self, senal_C1, senal_C2):
+
+        # Cambiar view de la ventana raiz para denotar validacion
+        self.__viewRaiz.etiquetaSeccionEEG.config(
+            text = 'Grabación EEG' 
+        ) # End config
+        self.__viewRaiz.etiquetaImagenValidacionDatosEEG.config(  
+            image=self.__viewRaiz.renderValidacionCorrecta
+        ) # End config
+
+        # Desaparecer botones para seleccionar origen de datos
+        self.__viewRaiz.botonDescartarDatos.place(x=170, y=211, height=28, width=115)
+        self.__viewRaiz.botonEscaneoEEG.place_forget()
+        self.__viewRaiz.botonCargarArchivo.place_forget()
+
+        # Indicarle al segundo controller que los datos funcionan
+        # y pasar un apuntador a los datos
+        # Nota: La insercion se lleva a cabo en crear usuario 
+        # pues se necesita el identificador
+        self.__controllerRaiz.aprobadoOrigenDatosEEG = True
+        self.__controllerRaiz.datos_C1 = senal_C1
+        self.__controllerRaiz.datos_C2 = senal_C2
+        self.__controllerRaiz.hayDatosEEG = True
+        
+        # Cerrar la ventana del recopilador
+        self._view.ventana.destroy()
+
+
+    # Funcion auxiliar para enviar a la base de datos la informacion recopilada 
+    def __autenticarConDatosRecopilados(self, senal_C1, senal_C2):
+
+        # Recuperar los datos de entrenamiento de la base de datos
+        entrenamiento_C1 = self._model.obtenerExperimentos(
+            self.__controllerRaiz.idUsuarioSeleccionado,
+            Movimiento.TIPO_C1
+        ) # End obtenerExperimentos
+        entrenamiento_C2 = self._model.obtenerExperimentos(
+            self.__controllerRaiz.idUsuarioSeleccionado,
+            Movimiento.TIPO_C2
+        ) # End obtenerExperimentos
+
+        # Obtener los parametros de autenticacion
+        # i.e. las fronteras, medias y desviaciones
+        parametros_C1 = self._model.obtenerParametrosAutenticacion(entrenamiento_C1)
+        parametros_C2 = self._model.obtenerParametrosAutenticacion(entrenamiento_C2)
+
+        # Determinar el estado de aprobacion
+        estados_C1 = self._model.obtenerAprobados(parametros_C1, entrenamiento_C1)
+        estados_C2 = self._model.obtenerAprobados(parametros_C2, entrenamiento_C2)
+        aprueba = self._model.determinarEstadoAutenticacion(
+            self.__controllerRaiz.idUsuarioSeleccionado,
+            estados_C1, estados_C2
+        ) # End determinarEstadoAutenticacion
+        
+        # Tomar una decision dependiendo de los valores de acceso dados
+        if aprueba:
+
+            if self.__controllerRaiz.hayUsuarioPreseleccionado:
+                print('200')
+                exit(0)
+            else:
+                # Crear un nuevo view de perfil y relacionarlo con un controller
+                viewIniciado = ViewIniciado()
+                controllerIniciado = ControllerIniciado( 
+                    viewIniciado, 
+                    self._model, 
+                    self.__controllerRaiz.idUsuarioSeleccionado
+                ) # End construct
+
+                try:
+                    self.__viewRaiz._cerrarVentana()
+                except:
+                    Tkinter.TclError
+
+                controllerIniciado.inicializarView()
+    
+        else:
+            MessageBox.showinfo(
+                "Error al autenticar",
+                "Sus señales no han podido probar su identidad"
+            ) # End showinfo
+
+        # Cerrar la ventana del recopilador
+        self._view.ventana.destroy()
+
+    def recopilarDatosEntrenamiento(self):
 
         # Establecer parametros del experimento
         duracion = 4
-        experimentos = [Movimiento.MANO_IZQUIERDA for _ in range(5)] + [Movimiento.MANO_DERECHA for _ in range(5)]
+        experimentos = [Movimiento.MANO_IZQUIERDA for _ in range(5)] + [Movimiento.MANO_DERECHA for _ in range(3)]
         shuffle(experimentos)
+
+        # Verificar el tipo del objeto que invoco al recopilador
+        # para determinar la accion que se realizara con los datos
+        funcionCallback = None
+        experimentosConservar = None
+
+        if type(self.__controllerRaiz).__name__ == 'ControllerCrearUsuario':
+            funcionCallback = self.__almacenarDatosRecopilados
+            experimentosConservar = 2
+        else:
+            funcionCallback = self.__autenticarConDatosRecopilados
+            experimentosConservar = 5
 
         # Iniciar la recopilacion de forma asincrona
         Thread(
-            target= lambda coleccionExperimentos=experimentos, duracionExperimentos=duracion : 
-                    self.conducirExperimento(coleccionExperimentos, duracionExperimentos)
+            target= lambda coleccionExperimentos=experimentos, duracionExperimentos=duracion, 
+                    exp_conservar=experimentosConservar, callback=funcionCallback: 
+                    self.conducirExperimento(
+                        coleccionExperimentos, duracionExperimentos, 
+                        exp_conservar, callback
+                    ) # End conducir experimento
         ).start()
         
 
     def inicializarView(self):
         self._view.construirView()
         self._view.establecerListeners(self)
+        self.recopilarDatosEntrenamiento()
         self._view.ventana.mainloop()
         
 

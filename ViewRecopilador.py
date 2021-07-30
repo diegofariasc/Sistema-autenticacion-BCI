@@ -74,8 +74,5 @@ class ViewRecopilador(View):
 
 
     def establecerListeners( self, controller ):
-
-        # ELIMINAR AL CONCLUIR PRUEBAS!!
-        self.etiquetaDescripcionMovimiento.bind("<Button-1>", controller.recopilarDatosEntrenamiento )
-
+        pass
         

@@ -1,3 +1,4 @@
+from threading                  import Thread
 from Controller                 import Controller
 from ViewIniciado               import ViewIniciado
 from ControllerIniciado         import ControllerIniciado
@@ -6,6 +7,8 @@ from ControllerCrearUsuario     import ControllerCrearUsuario
 from PIL                        import Image, ImageTk
 from View                       import View
 from ViewAuxiliar               import ViewAuxiliar
+from ControllerRecopilador      import ControllerRecopilador
+from ViewRecopilador            import ViewRecopilador
 from tkinter                    import messagebox as MessageBox
 
 import tkinter as Tkinter
@@ -17,8 +20,8 @@ class ControllerPrincipal(Controller):
 
         super().__init__(view,model)
         self.__usuarioSeleccionado = 0
-        self.__idUsuarioSeleccionado = None
-        self.__hayUsuarioPreseleccionado = (seleccionado != None)
+        self.idUsuarioSeleccionado = None
+        self.hayUsuarioPreseleccionado = (seleccionado != None)
         self.__bloquearBotonesDerechaIzquierda = False
 
         if seleccionado != None:
@@ -121,10 +124,10 @@ class ControllerPrincipal(Controller):
 
     def etiquetaImagenIngresar_Click(self,evento):
 
-        if  self._model.autenticar(self.__idUsuarioSeleccionado, 
+        if  self._model.autenticar(self.idUsuarioSeleccionado, 
             self._view.campoContrasena.get()):
 
-            if self.__hayUsuarioPreseleccionado:
+            if self.hayUsuarioPreseleccionado:
                 print('200')
                 exit(0)
             else:
@@ -133,7 +136,7 @@ class ControllerPrincipal(Controller):
                 controllerIniciado = ControllerIniciado( 
                     viewIniciado, 
                     self._model, 
-                    self.__idUsuarioSeleccionado
+                    self.idUsuarioSeleccionado
                 ) # End construct
 
                 try:
@@ -206,7 +209,7 @@ class ControllerPrincipal(Controller):
         ) # End config
         
         # Establecer id del usuario seleccionado
-        self.__idUsuarioSeleccionado = datosUsuario[0]
+        self.idUsuarioSeleccionado = datosUsuario[0]
 
         # Alterar la apariencia de los controles de derecha e izquierda
         # dependiendo de si se ha llegado a los limites de la 
@@ -233,11 +236,30 @@ class ControllerPrincipal(Controller):
                 cursor = 'arrow' 
             ) # End config
 
+    def botonUsarEscaneoEEG_Click(self, evento):
+
+        # Solicitar la confirmacion antes de iniciar
+        iniciar = MessageBox.askyesno(title='Iniciar grabación',
+                    message='Se iniciará una recopilación de datos EEG\n' +\
+                            'Deberá tener su casco conectado antes de iniciar\n'
+                            '¿Está seguro de que desea continuar?')
+
+        # Si se ha dado permiso para iniciar
+        if iniciar:
+            viewRecopilador = ViewRecopilador()
+            controllerViewRecopilador = ControllerRecopilador( viewRecopilador, self._model, self._view, self )
+            
+            # Lanzar el recopilador
+            Thread(
+                target=controllerViewRecopilador.inicializarView()
+            ).start()
+            
+
 
     def inicializarView(self):
         self._view.construirView()
 
-        if self.__hayUsuarioPreseleccionado:
+        if self.hayUsuarioPreseleccionado:
             self.__mostrarUsuarioSeleccionado(porIndice=False)
             self._view.etiquetaImagenIzquierda.place_forget()
             self._view.etiquetaImagenDerecha.place_forget()

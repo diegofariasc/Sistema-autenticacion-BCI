@@ -203,9 +203,8 @@ class ViewPrincipal(ViewPanel):
             cursor='hand2'
         ) # End label
 
-
-
     def establecerListeners( self, controller ):
+        self.botonEscaneoEEG.bind
         self.etiquetaImagenNuevoUsuario.bind("<Button-1>", controller.etiquetaImagenNuevoUsuario_Click)
         self.etiquetaImagenDerecha.bind("<Button-1>", controller.etiquetaImagenDerecha_Click)
         self.etiquetaImagenIzquierda.bind("<Button-1>", controller.etiquetaImagenIzquierda_Click)
@@ -213,6 +212,7 @@ class ViewPrincipal(ViewPanel):
         self.botonContrasena.bind("<Button-1>", controller.botonContrasena_Click)
         self.campoContrasena.bind("<FocusIn>", controller.campoContrasena_Focus)
         self.campoContrasena.bind("<FocusOut>", controller.campoContrasena_LostFocus)
+        self.botonEscaneoEEG.bind("<Button-1>", controller.botonUsarEscaneoEEG_Click)
         self.etiquetaVolverMetodoIngreso.bind("<Button-1>", controller.etiquetaVolverMetodoIngreso_Click)
         self.etiquetaImagenIngresar.bind("<Button-1>", controller.etiquetaImagenIngresar_Click)
         

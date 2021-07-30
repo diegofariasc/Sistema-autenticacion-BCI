@@ -11,7 +11,8 @@ CREATE TABLE USUARIO(
     contrasena              VARCHAR(255)    NOT NULL,
     fechaRegistro           DATE            NOT NULL, 
     nivelSeguridad          VARCHAR(10)     NOT NULL,
-    imagen                  BLOB,
+    imagen                  LONGBLOB,
+    sesionesRegistradas     INTEGER         NOT NULL DEFAULT 0,
     
     CONSTRAINT nivelSeguridadValido CHECK (
     nivelSeguridad = 'reducido' OR 
@@ -36,7 +37,7 @@ CREATE TABLE EXPERIMENTO (
         tipo = 'pie derecho'
     ), -- End constraint
 
-    FOREIGN KEY (usuario) REFERENCES USUARIO(id),
+    FOREIGN KEY (usuario) REFERENCES USUARIO(id) ON DELETE CASCADE,
     PRIMARY KEY (usuario, numeroExperimento, canal, tipo)
 ); 
 

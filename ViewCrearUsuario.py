@@ -417,7 +417,8 @@ class ViewCrearUsuario(View):
         self.botonRegistrar.bind("<Button-1>", controller.botonRegistrar_Click)
         self.botonCancelar.bind("<Button-1>", controller.botonCancelar_Click)
 
-        # Boton cargar registros
+        # Boton cargar registros y recopilar informacion EEG
+        self.botonEscaneoEEG.bind("<Button-1>", controller.botonRegistrarEEG_Click)
         self.botonCargarArchivo.bind("<Button-1>", controller.botonCargarArchivo_Click)
 
         # Boton para anular seleccion de origen de datos EEG

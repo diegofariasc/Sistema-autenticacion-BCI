@@ -1,11 +1,15 @@
+from threading                      import Thread
 from Controller                     import Controller
-from tkinter.filedialog             import askopenfilenames
+from tkinter.filedialog             import askopenfilenames, askdirectory
 from View                           import View
 from ViewAuxiliar                   import ViewAuxiliar
 from PIL                            import ImageTk
 from Model                          import Model
 from tkinter                        import messagebox as MessageBox
 from ControllerSelectorSeguridad    import ControllerSelectorSeguridad
+from ControllerRecopilador          import ControllerRecopilador
+from ViewRecopilador                import ViewRecopilador
+from Movimiento                     import Movimiento
 
 import tkinter as Tkinter
 import os
@@ -17,9 +21,40 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
         self.__aprobadoNombre = False
         self.__aprobadaContrasena = False
         self.__aprobadaConfirmacionContrasena = False
-        self.__aprobadoOrigenDatosEEG = False
+        self.aprobadoOrigenDatosEEG = False
         self.__archivosOrigen = []
         self.__imagenSeleccionada = None
+
+        # Arreglos para almacenar la informacion
+        # recopilada
+        self.datos_C1 = None
+        self.datos_C2 = None
+        self.hayDatosEEG = False
+
+    """
+    El metodo es invocado cuando se hace clic en el boton de
+    registrar EEG en el view
+    Input:  evento - con la descripcion del evento que la invoco
+    Output: None
+    """
+    def botonRegistrarEEG_Click(self, evento):
+
+        # Solicitar la confirmacion antes de iniciar
+        iniciar = MessageBox.askyesno(title='Iniciar grabación',
+                    message='Se iniciará una recopilación de datos EEG\n' +\
+                            'Deberá tener su casco conectado antes de iniciar\n'
+                            '¿Está seguro de que desea continuar?')
+
+        # Si se ha dado permiso para iniciar
+        if iniciar:
+            viewRecopilador = ViewRecopilador()
+            controllerViewRecopilador = ControllerRecopilador( viewRecopilador, self._model, self._view, self )
+            
+            # Lanzar el recopilador
+            Thread(
+                target=controllerViewRecopilador.inicializarView()
+            ).start()
+            
 
     """
     El metodo es invocado cuando se hace clic en el boton de
@@ -63,7 +98,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
             self._view.botonEscaneoEEG.place_forget()
             self._view.botonCargarArchivo.place_forget()
 
-            self.__aprobadoOrigenDatosEEG = True
+            self.aprobadoOrigenDatosEEG = True
 
         # Ver si tras seleccionar el archivo ya es posible
         # registrar al sujeto
@@ -79,8 +114,11 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
     def botonDescartarDatos_Click(self, evento):
 
         # Quitar validacion
-        self.__origenArchivo = ''
-        self.__aprobadoOrigenDatosEEG = False
+        self.__archivosOrigen = []
+        self.aprobadoOrigenDatosEEG = False
+        self.hayDatosEEG = False
+        self.datos_C1 = None
+        self.datos_C1 = None
 
         # Reflejar la desaprobacion en el view
         self._view.etiquetaSeccionEEG.config(
@@ -114,6 +152,15 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
             self._view.campoContrasena.get(),
             self._seguridadSeleccionada,
             imagen=self.__imagenSeleccionada ):
+
+            # Obtener el identificador del usuario insertado
+            usuario = self._model.obtenerUltimoUsuarioInsertado()
+
+            # Revisar si los datos son recopilados
+            if self.hayDatosEEG:
+                self._model.insertarExperimentos(self.datos_C1, Movimiento.TIPO_C1, usuario)
+                self._model.insertarExperimentos(self.datos_C2, Movimiento.TIPO_C2, usuario)
+                self._model.notificarGrabacionSesion(usuario)
 
             MessageBox.showinfo(
                 "Usuario registrado",
@@ -387,7 +434,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
 
         # Revisar si todos los campos han sido aprobados
         if  self.__aprobadoNombre and self.__aprobadaContrasena and \
-            self.__aprobadaConfirmacionContrasena and self.__aprobadoOrigenDatosEEG:
+            self.__aprobadaConfirmacionContrasena and self.aprobadoOrigenDatosEEG:
 
             self._view.botonRegistrar["state"] = 'normal'
         else:

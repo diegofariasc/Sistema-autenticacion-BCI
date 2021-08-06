@@ -70,7 +70,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
 
         # Reflejar la desaprobacion en el view
         self._view.etiquetaSeccionEEG.config(
-            text='Datos de entrenamiento EEG: No seleccionados' 
+            text='Datos de entrenamiento EEG: No registrados' 
         ) # End config
 
         self._view.etiquetaImagenValidacionDatosEEG.config(  

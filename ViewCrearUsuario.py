@@ -177,7 +177,7 @@ class ViewCrearUsuario(View):
         # Etiqueta descriptiva de la seccion de datos EEG
         self.etiquetaSeccionEEG= Tkinter.Label( 
             self.canvas, 
-            text='Datos de entrenamiento EEG: No seleccionados',
+            text='Datos de entrenamiento EEG: No registrados',
             bg=View.COLOR_FONDO,
             fg=ViewAuxiliar.obtenerColor(94,94,94),
             font="SegoeUI 11 normal",

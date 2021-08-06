@@ -60,7 +60,7 @@ class Model():
             instruction =   "INSERT INTO USUARIO (nombre, contrasena, nivelSeguridad, imagen) " + \
                             "VALUES (%s, %s, %s, %s)"
             nuevaTupla = ( nombre, contrasena, nivelSeguridad, imagen )
-
+            print(instruction)
             # Ejecutar y hacer commit
             cursor  = self.__connection.cursor()
             cursor.execute( instruction, nuevaTupla )

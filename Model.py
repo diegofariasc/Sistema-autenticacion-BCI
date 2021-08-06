@@ -60,7 +60,7 @@ class Model():
             instruction =   "INSERT INTO USUARIO (nombre, contrasena, nivelSeguridad, imagen) " + \
                             "VALUES (%s, %s, %s, %s)"
             nuevaTupla = ( nombre, contrasena, nivelSeguridad, imagen )
-            print(instruction)
+            
             # Ejecutar y hacer commit
             cursor  = self.__connection.cursor()
             cursor.execute( instruction, nuevaTupla )
@@ -322,11 +322,10 @@ class Model():
 
         # Preparar query
         cursor = self.__connection.cursor()
-        query = ("SELECT * FROM USUARIO WHERE id = %s AND contrasena = '%s'") % \
-                (id, contrasena)
-
+        query = ("SELECT * FROM USUARIO WHERE id = %s AND contrasena = %s")
+                
         # Lanzarla y devolver resultado
-        cursor.execute( query )
+        cursor.execute( query, (id, contrasena))
         result = cursor.fetchall()
         return len(result) == 1
 

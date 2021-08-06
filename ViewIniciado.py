@@ -119,30 +119,7 @@ class ViewIniciado(ViewPanel):
             anchor='w'
         ) # End label
         self.etiquetaMuestras.pack()
-        self.etiquetaMuestras.place(x=106, y=149, height=16, width=200)
-
-        # Imagen de calidad
-        self.imagenCalidad = Image.open("assets/ViewIniciado/calidad.png")
-        self.renderCalidad = ImageTk.PhotoImage(self.imagenCalidad, master=self.ventana)
-        self.etiquetaImagenCalidad = Tkinter.Label( 
-            self.canvas, 
-            bg=View.COLOR_FONDO,
-            image=self.renderCalidad
-        ) # End label
-        self.etiquetaImagenCalidad.pack()
-        self.etiquetaImagenCalidad.place(x=270, y=148, height=16, width=16)
-
-        # Etiqueta con la calidad se la senal
-        self.etiquetaCalidad= Tkinter.Label( 
-            self.canvas, 
-            text='Calidad de señales: 100.0%',
-            bg=View.COLOR_FONDO,
-            fg=ViewAuxiliar.obtenerColor(124,124,124),
-            font="SegoeUI 12 normal",
-            anchor='w'
-        ) # End label
-        self.etiquetaCalidad.pack()
-        self.etiquetaCalidad.place(x=293, y=149, height=16, width=200)
+        self.etiquetaMuestras.place(x=101, y=147, height=16, width=200)
 
         # Etiqueta descriptiva de los niveles de seguridad 
         self.etiquetaDescripcionNiveles= Tkinter.Label( 

@@ -259,7 +259,7 @@ class ViewCrearUsuario(View):
 
         # Crear panel para mostrar seleccion de nivel de seguridad
         self.selector = self.canvas.create_rectangle( 
-            215, 285, 345, 430, 
+            215, 287, 345, 442, 
             fill=View.COLOR_SELECTOR, 
             outline=View.COLOR_SELECTOR
         ) # End create_rectangle
@@ -299,7 +299,7 @@ class ViewCrearUsuario(View):
             cursor='hand2'
         ) # End label
         self.etiquetaImagenSeguridadAlta.pack()
-        self.etiquetaImagenSeguridadAlta.place(x=360, y=294, height=90, width=120)
+        self.etiquetaImagenSeguridadAlta.place(x=360, y=290, height=90, width=120)
 
         # Etiqueta de titulo seguridad baja
         self.etiquetaTituloSeguridadBaja = Tkinter.Label( 
@@ -347,7 +347,7 @@ class ViewCrearUsuario(View):
             cursor='hand2'
         ) # End label
         self.etiquetaDescripcionSeguridadBaja.pack()
-        self.etiquetaDescripcionSeguridadBaja.place(x=80, y=405, height=20, width=120)
+        self.etiquetaDescripcionSeguridadBaja.place(x=80, y=405, height=35, width=120)
 
         # Etiqueta de descripcion seguridad media
         self.etiquetaDescripcionSeguridadMedia = Tkinter.Label( 
@@ -359,7 +359,7 @@ class ViewCrearUsuario(View):
             cursor='hand2'
         ) # End label
         self.etiquetaDescripcionSeguridadMedia.pack()
-        self.etiquetaDescripcionSeguridadMedia.place(x=220, y=405, height=20, width=120)
+        self.etiquetaDescripcionSeguridadMedia.place(x=220, y=405, height=35, width=120)
 
         # Etiqueta de descripcion seguridad alta
         self.etiquetaDescripcionSeguridadAlta = Tkinter.Label( 
@@ -371,7 +371,7 @@ class ViewCrearUsuario(View):
             cursor='hand2'
         ) # End label
         self.etiquetaDescripcionSeguridadAlta.pack()
-        self.etiquetaDescripcionSeguridadAlta.place(x=360, y=405, height=20, width=120)
+        self.etiquetaDescripcionSeguridadAlta.place(x=360, y=405, height=35, width=120)
 
         # Boton para cancelar registro
         self.imagenCancelar = Image.open("assets/ViewCrearUsuario/cancelar.png")

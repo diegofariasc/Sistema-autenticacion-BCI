@@ -245,14 +245,13 @@ class ControllerRecopilador(Controller):
                     self._model, 
                     self.__controllerRaiz.idUsuarioSeleccionado
                 ) # End construct
+                controllerIniciado.inicializarView()
 
                 try:
                     self.__viewRaiz._cerrarVentana()
                 except:
                     Tkinter.TclError
-
-                controllerIniciado.inicializarView()
-    
+                    
         else:
             MessageBox.showinfo(
                 "Error al autenticar",

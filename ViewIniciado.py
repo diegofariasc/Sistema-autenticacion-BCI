@@ -237,7 +237,7 @@ class ViewIniciado(ViewPanel):
             cursor='hand2'
         ) # End label
         self.etiquetaDescripcionSeguridadBaja.pack()
-        self.etiquetaDescripcionSeguridadBaja.place(x=80, y=335, height=20, width=120)
+        self.etiquetaDescripcionSeguridadBaja.place(x=80, y=335, height=30, width=120)
 
         # Etiqueta de descripcion seguridad media
         self.etiquetaDescripcionSeguridadMedia = Tkinter.Label( 
@@ -249,7 +249,7 @@ class ViewIniciado(ViewPanel):
             cursor='hand2'
         ) # End label
         self.etiquetaDescripcionSeguridadMedia.pack()
-        self.etiquetaDescripcionSeguridadMedia.place(x=220, y=335, height=20, width=120)
+        self.etiquetaDescripcionSeguridadMedia.place(x=220, y=335, height=30, width=120)
 
         # Etiqueta de descripcion seguridad alta
         self.etiquetaDescripcionSeguridadAlta = Tkinter.Label( 
@@ -261,11 +261,11 @@ class ViewIniciado(ViewPanel):
             cursor='hand2'
         ) # End label
         self.etiquetaDescripcionSeguridadAlta.pack()
-        self.etiquetaDescripcionSeguridadAlta.place(x=360, y=335, height=20, width=120)
+        self.etiquetaDescripcionSeguridadAlta.place(x=360, y=335, height=30, width=120)
 
         # Crear panel para mostrar seleccion de nivel de seguridad
         self.selector = self.canvas.create_rectangle( 
-            215, 215, 345, 360, 
+            215, 215, 345, 370, 
             fill=View.COLOR_SELECTOR, 
             outline=View.COLOR_SELECTOR
         ) # End create_rectangle

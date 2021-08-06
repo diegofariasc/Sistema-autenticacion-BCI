@@ -204,7 +204,6 @@ class ViewPrincipal(ViewPanel):
         ) # End label
 
     def establecerListeners( self, controller ):
-        self.botonEscaneoEEG.bind
         self.etiquetaImagenNuevoUsuario.bind("<Button-1>", controller.etiquetaImagenNuevoUsuario_Click)
         self.etiquetaImagenDerecha.bind("<Button-1>", controller.etiquetaImagenDerecha_Click)
         self.etiquetaImagenIzquierda.bind("<Button-1>", controller.etiquetaImagenIzquierda_Click)

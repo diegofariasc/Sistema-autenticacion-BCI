@@ -22,6 +22,7 @@ class Model():
     BANDAS_GENERALES_C1 = [(36, 43), (4,8), (23, 35), (20, 23), (18, 22)]
     BANDAS_GENERALES_C2 = [(36, 43), (4,8), (23, 35), (20, 23), (18, 22)]
     FUNCIONES           = [std, mad, iqr]
+    TAMANO_BUFFER       = 5
 
 
     # Constructor
@@ -399,29 +400,54 @@ class Model():
             cursor.close()
             return False
 
-    def insertarExperimentos(self, experimentos, tipo, usuario):
 
-        # Obtener el numero maximo de experimentos insertados
-        cursor = self.__connection.cursor()
-        query = ("SELECT IFNULL(MAX(numeroExperimento) + 1,0)  FROM EXPERIMENTO " +\
-                "WHERE usuario=%s AND tipo='%s'") % (usuario, tipo)
-        cursor.execute( query )
-        offset_exp = cursor.fetchall()[0][0]
+    def abrirEspacioParaExperimentos(self, experimentos, usuario):
+
+        # Obtener el numero de datos
+        _, n_experimentos= shape(experimentos)
+
+        try:
+            # Obtener un cursor
+            cursor  = self.__connection.cursor()
+            
+            # Desplazar los experimentos existentes en la base n_experimentos valores
+            # a la derecha, liberando las primeras posiciones
+            instruction =   ("UPDATE EXPERIMENTO SET numeroExperimento = numeroExperimento + %s " + \
+                            "WHERE usuario = %s " + \
+                            "ORDER BY numeroExperimento DESC") % (n_experimentos, usuario)
+            cursor.execute( instruction )
+
+            # Si se tiene exito lanzar commit
+            self.__connection.commit()
+
+        except Exception as e:
+            # Operacion fallida -> rollback
+            self.__connection.rollback()
+            cursor.close()
+            return False
+
+    def insertarExperimentos(self, experimentos, tipo, usuario):
 
         try:
             # Obtener un cursor
             cursor  = self.__connection.cursor()
 
-            # Iterar sobre la estructura
+            # Obtener el numero de datos
             n_dimensiones, n_experimentos= shape(experimentos)
+
+            # Iterar sobre la estructura
             for n_exp in range(n_experimentos):
                 for n_dim in range(n_dimensiones):
 
-                    # Preparar instruccion y tupla
                     instruction =   "INSERT INTO EXPERIMENTO (usuario, numeroExperimento, canal, valor, tipo) " + \
                                     "VALUES (%s, %s, %s, %s, %s)"
-                    nuevaTupla = (usuario, n_exp + offset_exp, n_dim, experimentos[n_dim, n_exp], tipo)
+                    nuevaTupla = (usuario, n_exp , n_dim, experimentos[n_dim, n_exp], tipo)
                     cursor.execute( instruction, nuevaTupla )
+
+            # Desechar experimentos que rebasen el tamano de buffer indicado
+            instruction =   ("DELETE FROM EXPERIMENTO " + \
+                            "WHERE usuario = %s AND numeroExperimento >= %s") % (usuario, Model.TAMANO_BUFFER)
+            cursor.execute( instruction )
 
             # Si se tiene exito lanzar commit
             self.__connection.commit()
@@ -431,7 +457,6 @@ class Model():
             return True
 
         except Exception as e:
-
             # Operacion fallida -> rollback
             self.__connection.rollback()
             cursor.close()

@@ -1,15 +1,10 @@
-from time               import process_time, sleep
+from time               import sleep
 from Controller         import Controller
 from Movimiento         import Movimiento
 from Lector             import Lector
 from random             import randint, shuffle
 from threading          import Thread
 from ViewAuxiliar       import ViewAuxiliar
-from tkinter            import messagebox as MessageBox
-from ViewIniciado       import ViewIniciado
-from ControllerIniciado import ControllerIniciado
-
-import tkinter as Tkinter
 
 class ControllerRecopilador(Controller, Thread):
 
@@ -123,7 +118,7 @@ class ControllerRecopilador(Controller, Thread):
                 text="LISTO, ESPERE..."
             ) # End config
 
-    def conducirExperimento(self, tareas, duracionExperimentos, exp_conservar, callback):
+    def conducirExperimento(self, tareas, duracionExperimentos, callback):
 
         # Crear un lector
         lector = Lector(Lector.SIMULADOR,[1,2,3],puerto="")
@@ -171,13 +166,14 @@ class ControllerRecopilador(Controller, Thread):
         senal_C2 = rand(5,3,500)
 
         # Procesar la senal obtenida
-        procesada_C1, procesada_C2 = self._model.procesarSenal(senal_C1, senal_C2, exp_conservar)
-        sleep(3)
-        callback(procesada_C1, procesada_C2)
+        sleep(2)
+        callback(senal_C1, senal_C2)
 
 
     # Funcion auxiliar para enviar a la base de datos la informacion recopilada 
     def __almacenarDatosRecopilados(self, senal_C1, senal_C2):
+
+        senalProcesada_C1, senalProcesada_C2 = self._model.procesarSenal(senal_C1, senal_C2, 2)
 
         # Cambiar view de la ventana raiz para denotar validacion
         self.__viewRaiz.etiquetaSeccionEEG.config(
@@ -196,8 +192,8 @@ class ControllerRecopilador(Controller, Thread):
         # Nota: La insercion se lleva a cabo en crear usuario 
         # pues se necesita el identificador
         self.__controllerRaiz.aprobadoOrigenDatosEEG = True
-        self.__controllerRaiz.datos_C1 = senal_C1
-        self.__controllerRaiz.datos_C2 = senal_C2
+        self.__controllerRaiz.datos_C1 = senalProcesada_C1
+        self.__controllerRaiz.datos_C2 = senalProcesada_C2
         self.__controllerRaiz.hayDatosEEG = True
         self.__controllerRaiz.validarTodosCampos()
 
@@ -207,6 +203,8 @@ class ControllerRecopilador(Controller, Thread):
 
     # Funcion auxiliar para enviar a la base de datos la informacion recopilada 
     def __autenticarConDatosRecopilados(self, senal_C1, senal_C2):
+
+        senalProcesada_C1, senalProcesada_C2 = self._model.procesarSenal(senal_C1, senal_C2, 5)
 
         # Recuperar los datos de entrenamiento de la base de datos
         entrenamiento_C1 = self._model.obtenerExperimentos(
@@ -234,6 +232,21 @@ class ControllerRecopilador(Controller, Thread):
         # Pasar el resultado
         self.__controllerRaiz.resultadoRecopilador = aprueba
 
+        # Si el sistema determino que el sujeto es correcto
+        # reentrenar
+        if aprueba:
+            senalReentrenamiento_C1, senalReentrenamiento_C2 = self._model.procesarSenal(senal_C1, senal_C2, 1)
+
+            # Para verificar elementos insertados para reentrenamiento
+            # -- SOLO PRUEBA --
+            # from numpy import shape
+            # print(shape(senalReentrenamiento_C1))
+
+            self._model.abrirEspacioParaExperimentos(senalReentrenamiento_C1, self.__controllerRaiz.idUsuarioSeleccionado)
+            self._model.insertarExperimentos(senalReentrenamiento_C1, Movimiento.TIPO_C1, self.__controllerRaiz.idUsuarioSeleccionado)
+            self._model.insertarExperimentos(senalReentrenamiento_C2, Movimiento.TIPO_C2, self.__controllerRaiz.idUsuarioSeleccionado)
+            self._model.notificarGrabacionSesion(self.__controllerRaiz.idUsuarioSeleccionado)
+
         # Cerrar la ventana del recopilador
         self._view.ventana.destroy()
         self._view.ventana.quit()
@@ -248,22 +261,18 @@ class ControllerRecopilador(Controller, Thread):
         # Verificar el tipo del objeto que invoco al recopilador
         # para determinar la accion que se realizara con los datos
         funcionCallback = None
-        experimentosConservar = None
 
         if type(self.__controllerRaiz).__name__ == 'ControllerCrearUsuario':
             funcionCallback = self.__almacenarDatosRecopilados
-            experimentosConservar = 2
         else:
             funcionCallback = self.__autenticarConDatosRecopilados
-            experimentosConservar = 5
 
         # Iniciar la recopilacion de forma asincrona
         Thread(
             target= lambda coleccionExperimentos=experimentos, duracionExperimentos=duracion, 
-                    exp_conservar=experimentosConservar, callback=funcionCallback: 
+                    callback=funcionCallback: 
                     self.conducirExperimento(
-                        coleccionExperimentos, duracionExperimentos, 
-                        exp_conservar, callback
+                        coleccionExperimentos, duracionExperimentos, callback
                     ) # End conducir experimento
         ).start()
         

@@ -320,30 +320,30 @@ class Model():
         senal_C1 = array(senal_C1)
         senal_C2 = array(senal_C2)
 
-        print("Inicial\t\t\t(exp, canales, muestras)\t\t=> C1:", shape(senal_C1), "\tC2:", shape(senal_C2))
+        #print("Inicial\t\t\t(exp, canales, muestras)\t\t=> C1:", shape(senal_C1), "\tC2:", shape(senal_C2))
         senalTranspuesta_C1 = transpose(senal_C1, (1, 2, 0))
         senalTranspuesta_C2 = transpose(senal_C2, (1, 2, 0))
-        print("Transpuesta\t\t(canales, muestras, exp)\t\t=> C1:", shape(senalTranspuesta_C1), "\tC2:", shape(senalTranspuesta_C2))
+        #print("Transpuesta\t\t(canales, muestras, exp)\t\t=> C1:", shape(senalTranspuesta_C1), "\tC2:", shape(senalTranspuesta_C2))
 
         # Filtrar en las bandas generales
         senalFiltrada_C1 = self.__filtrar(senalTranspuesta_C1, Model.BANDAS_GENERALES_C1)
         senalFiltrada_C2 = self.__filtrar(senalTranspuesta_C2, Model.BANDAS_GENERALES_C2)
-        print("Filtrado\t\t(bandas, canales, muestras, exp)\t=> C1:", shape(senalFiltrada_C1), "\tC2:", shape(senalFiltrada_C2))
+        #print("Filtrado\t\t(bandas, canales, muestras, exp)\t=> C1:", shape(senalFiltrada_C1), "\tC2:", shape(senalFiltrada_C2))
 
         # Extraer caracteristicas
         caracteristicas_C1 = self.__extraerCaracteristicas(senalFiltrada_C1, Model.FUNCIONES)
         caracteristicas_C2 = self.__extraerCaracteristicas(senalFiltrada_C2, Model.FUNCIONES)
-        print("Extraccion\t\t(funciones, bandas canales, exp)\t=> C1:", shape(caracteristicas_C1), "\tC2:", shape(caracteristicas_C2))
+        #print("Extraccion\t\t(funciones, bandas canales, exp)\t=> C1:", shape(caracteristicas_C1), "\tC2:", shape(caracteristicas_C2))
 
         # Remocion de outliers
         sinOutliers_C1 = self.__removerOutliers(caracteristicas_C1, 3.5, exp_conservar)
         sinOutliers_C2 = self.__removerOutliers(caracteristicas_C2, 3.5, exp_conservar)
-        print("Remocion\t\t(funciones, bandas, canales, exp)\t=> C1:", shape(sinOutliers_C1), "\tC2:", shape(sinOutliers_C2))
+        #print("Remocion\t\t(funciones, bandas, canales, exp)\t=> C1:", shape(sinOutliers_C1), "\tC2:", shape(sinOutliers_C2))
         
         # Aplanado de datos
         aplanados_C1 = self.__aplanarDatos(sinOutliers_C1)
         aplanados_C2 = self.__aplanarDatos(sinOutliers_C2)
-        print("Aplanado\t\t('caracteristicas', exp)\t\t=> C1:", shape(aplanados_C1), "\t\tC2:", shape(aplanados_C2))
+        #print("Aplanado\t\t('caracteristicas', exp)\t\t=> C1:", shape(aplanados_C1), "\t\tC2:", shape(aplanados_C2))
         
         return (aplanados_C1, aplanados_C2)
 

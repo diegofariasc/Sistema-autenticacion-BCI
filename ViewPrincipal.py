@@ -214,4 +214,5 @@ class ViewPrincipal(ViewPanel):
         self.botonEscaneoEEG.bind("<Button-1>", controller.botonUsarEscaneoEEG_Click)
         self.etiquetaVolverMetodoIngreso.bind("<Button-1>", controller.etiquetaVolverMetodoIngreso_Click)
         self.etiquetaImagenIngresar.bind("<Button-1>", controller.etiquetaImagenIngresar_Click)
+        self.campoContrasena.bind("<Return>", controller.etiquetaImagenIngresar_Click)
         

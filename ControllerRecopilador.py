@@ -200,7 +200,8 @@ class ControllerRecopilador(Controller):
         self.__controllerRaiz.datos_C1 = senal_C1
         self.__controllerRaiz.datos_C2 = senal_C2
         self.__controllerRaiz.hayDatosEEG = True
-        
+        self.__controllerRaiz.validarTodosCampos()
+
         # Cerrar la ventana del recopilador
         self._view.ventana.destroy()
 
@@ -220,8 +221,8 @@ class ControllerRecopilador(Controller):
 
         # Obtener los parametros de autenticacion
         # i.e. las fronteras, medias y desviaciones
-        parametros_C1 = self._model.obtenerParametrosAutenticacion(entrenamiento_C1)
-        parametros_C2 = self._model.obtenerParametrosAutenticacion(entrenamiento_C2)
+        parametros_C1 = self._model.obtenerParametrosAutenticacion(senal_C1)
+        parametros_C2 = self._model.obtenerParametrosAutenticacion(senal_C2)
 
         # Determinar el estado de aprobacion
         estados_C1 = self._model.obtenerAprobados(parametros_C1, entrenamiento_C1)

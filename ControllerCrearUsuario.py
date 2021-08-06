@@ -102,7 +102,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
 
         # Ver si tras seleccionar el archivo ya es posible
         # registrar al sujeto
-        self.__validarTodosCampos()
+        self.validarTodosCampos()
 
 
     """
@@ -135,7 +135,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
         self._view.botonCargarArchivo.place(x=290, y=211, height=28, width=115)
 
         # Desaparecer boton de registrar
-        self.__validarTodosCampos()
+        self.validarTodosCampos()
 
 
     """
@@ -331,7 +331,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
 
         # Revisar si ya se han pasado todas las condiciones 
         # para registrar al usuario
-        self.__validarTodosCampos()
+        self.validarTodosCampos()
 
     """
     El metodo es invocado cuando se presiona una tecla en el campo de
@@ -366,7 +366,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
 
         # Revisar si ya se han pasado todas las condiciones 
         # para registrar al usuario
-        self.__validarTodosCampos()
+        self.validarTodosCampos()
 
     """
     El metodo es invocado cuando se presiona una tecla en el campo de
@@ -396,7 +396,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
 
         # Revisar si ya se han pasado todas las condiciones 
         # para registrar al usuario
-        self.__validarTodosCampos()
+        self.validarTodosCampos()
         
 
 
@@ -430,7 +430,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
     Input:  None
     Output: None
     """
-    def __validarTodosCampos(self):
+    def validarTodosCampos(self):
 
         # Revisar si todos los campos han sido aprobados
         if  self.__aprobadoNombre and self.__aprobadaContrasena and \

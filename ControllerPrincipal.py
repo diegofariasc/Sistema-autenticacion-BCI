@@ -93,6 +93,11 @@ class ControllerPrincipal(Controller):
         # Cambiar titulo de la ventana
         self._view.etiquetaDescripcionVentana.config(text='Especifique la contraseña para')
 
+        # Seleccionar el campo de contrasena
+        self._view.campoContrasena.focus()
+        self._view.campoContrasena.select_clear()
+        self._view.campoContrasena.select_range(0,'end')
+
     def etiquetaVolverMetodoIngreso_Click(self,evento):
 
         # Reaparecer botones de metodos de autenticacion

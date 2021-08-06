@@ -53,7 +53,8 @@ class ControllerPrincipal(Controller):
 
         # Mover en 1 el indicador usuarioSeleccionado y reflejarlo
         # en el view
-        if  self.__usuarioSeleccionado < self._model.obtenerNumeroUsuarios() - 1 \
+        if  self._model.verificarSiHayUsuarios() and \
+            self.__usuarioSeleccionado < self._model.obtenerNumeroUsuarios() - 1 \
             and not self.__bloquearBotonesDerechaIzquierda:
             self.__usuarioSeleccionado += 1
             self.__mostrarUsuarioSeleccionado()
@@ -62,7 +63,8 @@ class ControllerPrincipal(Controller):
 
         # Mover en 1 el indicador usuarioSeleccionado y reflejarlo
         # en el view
-        if self.__usuarioSeleccionado > 0 \
+        if  self._model.verificarSiHayUsuarios() and \
+            self.__usuarioSeleccionado > 0 \
             and not self.__bloquearBotonesDerechaIzquierda:
             self.__usuarioSeleccionado -= 1
             self.__mostrarUsuarioSeleccionado()
@@ -195,51 +197,75 @@ class ControllerPrincipal(Controller):
 
     def __mostrarUsuarioSeleccionado(self, porIndice=True):
 
-        # Recuperar datos del usuario seleccionado en el model
-        datosUsuario = self._model.obtenerDatosUsuario(self.__usuarioSeleccionado, porIndice)
+        # Validar que haya usuarios para mostrar
+        if (self._model.verificarSiHayUsuarios()):
 
-        # Ajustar imagen a tamano del contenedor 
-        datosUsuario[5] = datosUsuario[5].resize((147,147))
+            # Remover indicador de que faltan usuarios
+            self._view.fondoSinUsuarios.place_forget()
+            self._view.etiquetaSinUsuarios.place_forget()
+            self._view.etiquetaInstruccionesCrearUsuario.place_forget()
+            self._view.etiquetaImagenSinUsuarios.place_forget()
 
-        # Desplegar imagen en view
-        self.renderUsuario = ImageTk.PhotoImage(datosUsuario[5], master= self._view.ventana)
-        self._view.etiquetaImagenUsuario.config(image=self.renderUsuario)
-        self._view.etiquetaNombreUsuario.config(text=datosUsuario[1])
+            # Activar los botones para inicio
+            self._view.botonContrasena.bind("<Button-1>", self.botonContrasena_Click)
+            self._view.botonEscaneoEEG.bind("<Button-1>", self.botonUsarEscaneoEEG_Click)
+            
+            # Recuperar datos del usuario seleccionado en el model
+            datosUsuario = self._model.obtenerDatosUsuario(self.__usuarioSeleccionado, porIndice)
 
-        # Leer fecha y mostrarla en el view
-        fechaRegistro = datosUsuario[3]
-        locale.setlocale(locale.LC_TIME, "es_ES") 
-        self._view.etiquetaFechaRegistro.config(
-            text= 'Registrado el: ' + str(fechaRegistro.strftime("%d de %B de %Y")) 
-        ) # End config
-        
-        # Establecer id del usuario seleccionado
-        self.idUsuarioSeleccionado = datosUsuario[0]
+            # Ajustar imagen a tamano del contenedor 
+            datosUsuario[5] = datosUsuario[5].resize((147,147))
 
-        # Alterar la apariencia de los controles de derecha e izquierda
-        # dependiendo de si se ha llegado a los limites de la 
-        # coleccion de usuarios
-        if self.__usuarioSeleccionado > 0:
-            self._view.etiquetaImagenIzquierda.config(
-                image=self._view.renderIzquierda,
-                cursor='hand2'
+            # Desplegar imagen en view
+            self.renderUsuario = ImageTk.PhotoImage(datosUsuario[5], master= self._view.ventana)
+            self._view.etiquetaImagenUsuario.config(image=self.renderUsuario)
+            self._view.etiquetaNombreUsuario.config(text=datosUsuario[1])
+
+            # Leer fecha y mostrarla en el view
+            fechaRegistro = datosUsuario[3]
+            locale.setlocale(locale.LC_TIME, "es_ES") 
+            self._view.etiquetaFechaRegistro.config(
+                text= 'Registrado el: ' + str(fechaRegistro.strftime("%d de %B de %Y")) 
             ) # End config
-        else:
-            self._view.etiquetaImagenIzquierda.config(
-                image = self._view.renderIzquierdaDesactivado,
-                cursor = 'arrow' 
-            ) #End config
+            
+            # Establecer id del usuario seleccionado
+            self.idUsuarioSeleccionado = datosUsuario[0]
 
-        if self.__usuarioSeleccionado < self._model.obtenerNumeroUsuarios() - 1:
-            self._view.etiquetaImagenDerecha.config(
-                image=self._view.renderDerecha,
-                cursor='hand2'
-            ) 
+            # Alterar la apariencia de los controles de derecha e izquierda
+            # dependiendo de si se ha llegado a los limites de la 
+            # coleccion de usuarios
+            if self.__usuarioSeleccionado > 0:
+                self._view.etiquetaImagenIzquierda.config(
+                    image=self._view.renderIzquierda,
+                    cursor='hand2'
+                ) # End config
+            else:
+                self._view.etiquetaImagenIzquierda.config(
+                    image = self._view.renderIzquierdaDesactivado,
+                    cursor = 'arrow' 
+                ) #End config
+
+            if self.__usuarioSeleccionado < self._model.obtenerNumeroUsuarios() - 1:
+                self._view.etiquetaImagenDerecha.config(
+                    image=self._view.renderDerecha,
+                    cursor='hand2'
+                ) 
+            else:
+                self._view.etiquetaImagenDerecha.config(
+                    image=self._view.renderDerechaDesactivado,
+                    cursor = 'arrow' 
+                ) # End config
         else:
-            self._view.etiquetaImagenDerecha.config(
-                image=self._view.renderDerechaDesactivado,
-                cursor = 'arrow' 
-            ) # End config
+
+            # Desplegar pantalla indicando falta de usuarios
+            self._view.fondoSinUsuarios.place(x=0, y=95, height=View.ALTO - 115, width=View.LARGO)
+            self._view.etiquetaSinUsuarios.place(x=0, y=272, height=20, width=View.LARGO)
+            self._view.etiquetaInstruccionesCrearUsuario.place(x=0, y=300, height=20, width=View.LARGO)
+            self._view.etiquetaImagenSinUsuarios.place(x=(View.LARGO - 100) / 2, y=(View.ALTO - 100) / 2, height=100, width=100)
+
+            # Activar los botones para inicio
+            self._view.botonContrasena.unbind("<Button 1>")
+            self._view.botonEscaneoEEG.unbind("<Button 1>")
 
     def botonUsarEscaneoEEG_Click(self, _):
 

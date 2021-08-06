@@ -154,6 +154,22 @@ class Model():
         return result[0][0]
 
     """
+    El metodo permite recuperar los experimentos
+    registrados en el sistema
+    Input:  None
+    Output: numpy array
+    """
+    def verificarSiHayUsuarios(self):
+
+        # Recuperar el numero de dimensiones
+        cursor = self.__connection.cursor()
+        query = "SELECT COUNT(*) FROM USUARIO"
+
+        cursor.execute( query )
+        return cursor.fetchall()[0][0] > 0
+
+
+    """
     El metodo permite recuperar el numero de usuarios
     registrados en el sistema
     Input:  None

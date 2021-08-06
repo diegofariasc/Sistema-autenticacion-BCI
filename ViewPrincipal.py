@@ -27,7 +27,6 @@ class ViewPrincipal(ViewPanel):
             cursor='hand2'
         ) # End label
 
-        self.etiquetaImagenNuevoUsuario.pack()
         self.etiquetaImagenNuevoUsuario.place(x=25, y=25, height=45, width=45)
 
         # Etiqueta correspondiente al boton de crear usuario
@@ -38,7 +37,6 @@ class ViewPrincipal(ViewPanel):
             fg=View.COLOR_TEXTO_PANEL,
             font="SegoeUI 11 normal"
         ) # End label
-        self.etiquetaDescripcionNuevoUsuario.pack()
         self.etiquetaDescripcionNuevoUsuario.place(x=10, y=70, height=20, width=75)
 
 
@@ -53,7 +51,6 @@ class ViewPrincipal(ViewPanel):
             cursor='hand2'
         ) # End label
 
-        self.etiquetaImagenAbortarInicio.pack()
         self.etiquetaImagenAbortarInicio.place(x=25, y=25, height=45, width=45)
 
         # Etiqueta correspondiente al boton de crear usuario
@@ -64,7 +61,6 @@ class ViewPrincipal(ViewPanel):
             fg=View.COLOR_TEXTO_PANEL,
             font="SegoeUI 11 normal"
         ) # End label
-        self.etiquetaDescripcionAbortarInicio.pack()
         self.etiquetaDescripcionAbortarInicio.place(x=10, y=70, height=20, width=75)
 
 
@@ -76,7 +72,6 @@ class ViewPrincipal(ViewPanel):
             fg=View.COLOR_CONTRASTE,
             font="SegoeUI 13 normal"
         ) # End label
-        self.etiquetaDescripcionVentana.pack()
         self.etiquetaDescripcionVentana.place(x=0, y=110, height=20, width=View.LARGO)
 
         # Imagen de usuario
@@ -85,7 +80,6 @@ class ViewPrincipal(ViewPanel):
             bg=View.COLOR_FONDO
         ) # End label
 
-        self.etiquetaImagenUsuario.pack()
         self.etiquetaImagenUsuario.place(x=0, y=138, height=150, width=View.LARGO)
 
         # Imagen de moverse a la derecha
@@ -134,7 +128,6 @@ class ViewPrincipal(ViewPanel):
             fg=ViewAuxiliar.obtenerColor(94,94,94),
             font="SegoeUI 12 normal"
         ) # End label
-        self.etiquetaFechaRegistro.pack()
         self.etiquetaFechaRegistro.place(x=0, y=320, height=20, width=View.LARGO)
 
         # Boton de escaneo EEG
@@ -150,8 +143,6 @@ class ViewPrincipal(ViewPanel):
             compound = Tkinter.LEFT,
             cursor='hand2'
         ) # End button
-
-        self.botonEscaneoEEG.pack()
         self.botonEscaneoEEG.place(x=135, y=345, height=28, width=135)
 
         # Boton de contrasena
@@ -167,8 +158,6 @@ class ViewPrincipal(ViewPanel):
             compound = Tkinter.LEFT,
             cursor='hand2'
         ) # End button
-
-        self.botonContrasena.pack()
         self.botonContrasena.place(x=280, y=345, height=28, width=135)
 
         # Campo contrasena
@@ -203,15 +192,50 @@ class ViewPrincipal(ViewPanel):
             cursor='hand2'
         ) # End label
 
+
+        # Generar seccion en caso de que se encuentre vacia la lista de usuarios
+
+        # Fondo
+        self.fondoSinUsuarios = Tkinter.Label( 
+            self.canvas, 
+            bg=View.COLOR_FONDO,
+        ) # End label
+
+        # Etiqueta indicando que no hay usuarios 
+        self.etiquetaSinUsuarios= Tkinter.Label( 
+            self.canvas, 
+            text='No hay usuarios registrados',
+            bg=View.COLOR_FONDO,
+            fg=ViewAuxiliar.obtenerColor(64,64,64),
+            font="SegoeUI 16 normal"
+        ) # End label
+        
+        # Etiqueta indicando 
+        self.etiquetaInstruccionesCrearUsuario = Tkinter.Label( 
+            self.canvas, 
+            text='Debe generar usuarios para emplear el autenticador',
+            bg=View.COLOR_FONDO,
+            fg=ViewAuxiliar.obtenerColor(94,94,94),
+            font="SegoeUI 12 normal"
+        ) # End label
+
+        # Imagen de no usuarios
+        self.imagenSinUsuarios = Image.open("assets/ViewPrincipal/sinUsuarios.png")
+        self.renderSinUsuarios  = ImageTk.PhotoImage(self.imagenSinUsuarios, master=self.ventana)
+        self.etiquetaImagenSinUsuarios = Tkinter.Label( 
+            self.canvas, 
+            bg = View.COLOR_FONDO,
+            image=self.renderSinUsuarios,
+        ) # End label
+        
+        
     def establecerListeners( self, controller ):
         self.etiquetaImagenNuevoUsuario.bind("<Button-1>", controller.etiquetaImagenNuevoUsuario_Click)
         self.etiquetaImagenDerecha.bind("<Button-1>", controller.etiquetaImagenDerecha_Click)
         self.etiquetaImagenIzquierda.bind("<Button-1>", controller.etiquetaImagenIzquierda_Click)
         self.etiquetaImagenAbortarInicio.bind("<Button-1>", controller.etiquetaImagenAbortarInicio_Click)
-        self.botonContrasena.bind("<Button-1>", controller.botonContrasena_Click)
         self.campoContrasena.bind("<FocusIn>", controller.campoContrasena_Focus)
         self.campoContrasena.bind("<FocusOut>", controller.campoContrasena_LostFocus)
-        self.botonEscaneoEEG.bind("<Button-1>", controller.botonUsarEscaneoEEG_Click)
         self.etiquetaVolverMetodoIngreso.bind("<Button-1>", controller.etiquetaVolverMetodoIngreso_Click)
         self.etiquetaImagenIngresar.bind("<Button-1>", controller.etiquetaImagenIngresar_Click)
         self.campoContrasena.bind("<Return>", controller.etiquetaImagenIngresar_Click)

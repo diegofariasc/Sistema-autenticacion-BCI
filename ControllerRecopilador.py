@@ -11,7 +11,7 @@ from ControllerIniciado import ControllerIniciado
 
 import tkinter as Tkinter
 
-class ControllerRecopilador(Controller):
+class ControllerRecopilador(Controller, Thread):
 
 
     def __init__(self, view, model, viewRaiz, controllerRaiz):
@@ -220,8 +220,8 @@ class ControllerRecopilador(Controller):
 
         # Obtener los parametros de autenticacion
         # i.e. las fronteras, medias y desviaciones
-        parametros_C1 = self._model.obtenerParametrosAutenticacion(senal_C1)
-        parametros_C2 = self._model.obtenerParametrosAutenticacion(senal_C2)
+        parametros_C1 = self._model.obtenerParametrosAutenticacion(entrenamiento_C1)
+        parametros_C2 = self._model.obtenerParametrosAutenticacion(entrenamiento_C2)
 
         # Determinar el estado de aprobacion
         estados_C1 = self._model.obtenerAprobados(parametros_C1, entrenamiento_C1)
@@ -231,35 +231,12 @@ class ControllerRecopilador(Controller):
             estados_C1, estados_C2
         ) # End determinarEstadoAutenticacion
         
-        # Tomar una decision dependiendo de los valores de acceso dados
-        if aprueba:
-
-            if self.__controllerRaiz.hayUsuarioPreseleccionado:
-                print('200')
-                exit(0)
-            else:
-                # Crear un nuevo view de perfil y relacionarlo con un controller
-                viewIniciado = ViewIniciado()
-                controllerIniciado = ControllerIniciado( 
-                    viewIniciado, 
-                    self._model, 
-                    self.__controllerRaiz.idUsuarioSeleccionado
-                ) # End construct
-                controllerIniciado.inicializarView()
-
-                try:
-                    self.__viewRaiz._cerrarVentana()
-                except:
-                    Tkinter.TclError
-                    
-        else:
-            MessageBox.showinfo(
-                "Error al autenticar",
-                "Sus señales no han podido probar su identidad"
-            ) # End showinfo
+        # Pasar el resultado
+        self.__controllerRaiz.resultadoRecopilador = aprueba
 
         # Cerrar la ventana del recopilador
         self._view.ventana.destroy()
+        self._view.ventana.quit()
 
     def recopilarDatosEntrenamiento(self):
 

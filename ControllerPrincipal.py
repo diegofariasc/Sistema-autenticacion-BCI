@@ -21,6 +21,7 @@ class ControllerPrincipal(Controller):
         super().__init__(view,model)
         self.__usuarioSeleccionado = 0
         self.idUsuarioSeleccionado = None
+        self.resultadoRecopilador = None
         self.hayUsuarioPreseleccionado = (seleccionado != None)
         self.__bloquearBotonesDerechaIzquierda = False
 
@@ -33,19 +34,19 @@ class ControllerPrincipal(Controller):
 
     def etiquetaImagenNuevoUsuario_Click(self, _):
 
-                # Crear un nuevo view de crear usuario y relacionarlo con un controller
-                viewCrearUsuario = ViewCrearUsuario()
-                controllerCrearUsuario = ControllerCrearUsuario( 
-                    viewCrearUsuario, 
-                    self._model
-                ) # End construct
+        # Crear un nuevo view de crear usuario y relacionarlo con un controller
+        viewCrearUsuario = ViewCrearUsuario()
+        controllerCrearUsuario = ControllerCrearUsuario( 
+            viewCrearUsuario, 
+            self._model
+        ) # End construct
 
-                try:
-                    self._cerrarVentana()
-                except:
-                    Tkinter.TclError
+        try:
+            self._cerrarVentana()
+        except:
+            Tkinter.TclError
 
-                controllerCrearUsuario.inicializarView()
+        controllerCrearUsuario.inicializarView()
 
 
     def etiquetaImagenDerecha_Click(self, _):
@@ -150,7 +151,6 @@ class ControllerPrincipal(Controller):
                     Tkinter.TclError
 
                 controllerIniciado.inicializarView()
-                
 
         else:
             MessageBox.showinfo(
@@ -251,14 +251,51 @@ class ControllerPrincipal(Controller):
 
         # Si se ha dado permiso para iniciar
         if iniciar:
+            
             viewRecopilador = ViewRecopilador()
             controllerViewRecopilador = ControllerRecopilador( viewRecopilador, self._model, self._view, self )
+
+            # Ocultar la ventana principal para prevenir modificaciones
+            self._view.ventana.withdraw()
             
             # Lanzar el recopilador
-            Thread(
-                target=controllerViewRecopilador.inicializarView()
-            ).start()
-            
+            thread = Thread(target=controllerViewRecopilador.inicializarView())
+            thread.start()
+
+            # Hacer join en los threads 
+            # para volver al principal
+            thread.join()
+
+            # Tomar una decision dependiendo de los valores de acceso dados
+            if self.resultadoRecopilador:
+
+                if self.hayUsuarioPreseleccionado:
+                    print('200')
+                    exit(0)
+                else:
+
+                    # Crear un nuevo view de perfil y relacionarlo con un controller
+                    viewIniciado = ViewIniciado()
+                    controllerIniciado = ControllerIniciado( 
+                        viewIniciado, 
+                        self._model, 
+                        self.idUsuarioSeleccionado
+                    ) # End construct
+                    
+                    # Cerrar ventana principal
+                    self._view.ventana.destroy()
+                    self._view.ventana.quit()
+                    
+                    controllerIniciado.inicializarView()
+
+            else:
+                MessageBox.showinfo(
+                    "Error al autenticar",
+                    "Sus señales no han podido probar su identidad"
+                ) # End showinfo
+                
+                # Restaurar el view principal
+                self._view.ventana.deiconify()
 
 
     def inicializarView(self):

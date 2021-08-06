@@ -72,7 +72,6 @@ class ViewRecopilador(View):
 
         self.etiquetaDescripcionMovimiento.place(x=0, y= 220, height=24, width=self.LARGO)
 
-
     def establecerListeners( self, controller ):
         pass
         

@@ -61,7 +61,7 @@ class ControllerIniciado(ControllerSelectorSeguridad):
         super().opcionSeguridadAlta_Click(evento)
         self._model.establecerNivelSeguridad(self.__idUsuario, self._seguridadSeleccionada)
 
-    def etiquetaImagenEliminarUsuario_Click(self, evento):
+    def etiquetaImagenEliminarUsuario_Click(self, _):
 
         if askquestion (
             'Eliminar perfil',
@@ -83,7 +83,7 @@ class ControllerIniciado(ControllerSelectorSeguridad):
                     "Se ha producido un error desconocido al eliminar su perfil en el sistema"
                 ) # End showerror
 
-    def etiquetaImagenCerrarSesion_Click(self, evento):
+    def etiquetaImagenCerrarSesion_Click(self, _):
         self.__cerrarSesion()
 
     def __cerrarSesion(self):

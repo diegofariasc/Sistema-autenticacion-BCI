@@ -22,7 +22,6 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
         self.__aprobadaContrasena = False
         self.__aprobadaConfirmacionContrasena = False
         self.aprobadoOrigenDatosEEG = False
-        self.__archivosOrigen = []
         self.__imagenSeleccionada = None
 
         # Arreglos para almacenar la informacion
@@ -37,7 +36,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
     Input:  evento - con la descripcion del evento que la invoco
     Output: None
     """
-    def botonRegistrarEEG_Click(self, evento):
+    def botonRegistrarEEG_Click(self, _):
 
         # Solicitar la confirmacion antes de iniciar
         iniciar = MessageBox.askyesno(title='Iniciar grabación',
@@ -54,56 +53,6 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
             Thread(
                 target=controllerViewRecopilador.inicializarView()
             ).start()
-            
-
-    """
-    El metodo es invocado cuando se hace clic en el boton de
-    cargar registro en el view
-    Input:  evento - con la descripcion del evento que la invoco
-    Output: None
-    """
-    def botonCargarArchivo_Click(self, evento):
-
-        # Lanzar cuadro para seleccion de imagen
-        self.__archivosOrigen = list(askopenfilenames(
-            title = 'Choose a file',
-            filetypes = [("Registros EEG en formato GDF", ".gdf")]
-        )) # End askopenfilename 
-
-        # Ver si el usuario selecciono algo valido
-        if len(self.__archivosOrigen) >= 2 :
-
-            # Construir etiqueta con los nombres de archivos
-            # cargados
-            textoArchivos = 'Datos de entrenamiento EEG: '
-
-            for i in range( len(self.__archivosOrigen) ):
-
-                textoArchivos += os.path.basename(self.__archivosOrigen[i])
-
-                if i < len(self.__archivosOrigen) - 1:
-                    textoArchivos += ", "
-
-            # Cambiar view para denotar validacion
-            self._view.etiquetaSeccionEEG.config(
-                text = textoArchivos 
-            ) # End config
-
-            self._view.etiquetaImagenValidacionDatosEEG.config(  
-                image=self._view.renderValidacionCorrecta
-            ) # End config
-
-            # Desaparecer botones para seleccionar origen de datos
-            self._view.botonDescartarDatos.place(x=170, y=211, height=28, width=115)
-            self._view.botonEscaneoEEG.place_forget()
-            self._view.botonCargarArchivo.place_forget()
-
-            self.aprobadoOrigenDatosEEG = True
-
-        # Ver si tras seleccionar el archivo ya es posible
-        # registrar al sujeto
-        self.validarTodosCampos()
-
 
     """
     El metodo es invocado cuando se hace clic en el boton de
@@ -111,10 +60,9 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
     Input:  evento - con la descripcion del evento que la invoco
     Output: None
     """
-    def botonDescartarDatos_Click(self, evento):
+    def botonDescartarDatos_Click(self, _):
 
         # Quitar validacion
-        self.__archivosOrigen = []
         self.aprobadoOrigenDatosEEG = False
         self.hayDatosEEG = False
         self.datos_C1 = None
@@ -132,7 +80,6 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
         # Aparecer botones para seleccionar origen de datos
         self._view.botonDescartarDatos.place_forget()
         self._view.botonEscaneoEEG.place(x=170, y=211, height=28, width=115)
-        self._view.botonCargarArchivo.place(x=290, y=211, height=28, width=115)
 
         # Desaparecer boton de registrar
         self.validarTodosCampos()
@@ -144,7 +91,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
     Input:  evento - con la descripcion del evento que la invoco
     Output: None
     """
-    def botonRegistrar_Click(self, evento):
+    def botonRegistrar_Click(self, _):
 
         # Registrar en el model
         if  self._model.insertarUsuario(
@@ -197,7 +144,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
     Input:  evento - con la descripcion del evento que la invoco
     Output: None
     """
-    def botonCancelar_Click(self,evento):
+    def botonCancelar_Click(self,_):
 
         from ControllerPrincipal import ControllerPrincipal
         from ViewPrincipal import ViewPrincipal
@@ -222,7 +169,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
     Input:  evento - con la descripcion del evento que la invoco
     Output: None
     """
-    def campoNombre_Focus(self,evento):
+    def campoNombre_Focus(self,_):
         if self._view.campoNombre.get() == 'Nombre de usuario':
             self._view.campoNombre.delete(0,Tkinter.END)
             self._view.campoNombre.config(
@@ -236,7 +183,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
     Input:  evento - con la descripcion del evento que la invoco
     Output: None
     """
-    def campoContrasena_Focus(self,evento):
+    def campoContrasena_Focus(self,_):
         if self._view.campoContrasena.get() == 'Contraseña auxiliar':
             self._view.campoContrasena.delete(0,Tkinter.END)
             self._view.campoContrasena.config(  
@@ -251,7 +198,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
     Input:  evento - con la descripcion del evento que la invoco
     Output: None
     """
-    def campoConfirmarContrasena_Focus(self,evento):
+    def campoConfirmarContrasena_Focus(self,_):
         if self._view.campoConfirmarContrasena.get() == 'Confirmar contraseña':
             self._view.campoConfirmarContrasena.delete(0,Tkinter.END)
             self._view.campoConfirmarContrasena.config( 
@@ -266,7 +213,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
     Input:  evento - con la descripcion del evento que la invoco
     Output: None
     """
-    def campoNombre_LostFocus(self,evento):
+    def campoNombre_LostFocus(self,_):
         if self._view.campoNombre.get() == '':
             self._view.campoNombre.insert(0,'Nombre de usuario')
             self._view.campoNombre.config(  
@@ -280,7 +227,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
     Input:  evento - con la descripcion del evento que la invoco
     Output: None
     """
-    def campoContrasena_LostFocus(self,evento):
+    def campoContrasena_LostFocus(self,_):
         if self._view.campoContrasena.get() == '':
             self._view.campoContrasena.insert(0,'Contraseña auxiliar')
             self._view.campoContrasena.config(  
@@ -295,7 +242,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
     Input:  evento - con la descripcion del evento que la invoco
     Output: None
     """
-    def campoConfirmarContrasena_LostFocus(self,evento):
+    def campoConfirmarContrasena_LostFocus(self,_):
         if self._view.campoConfirmarContrasena.get() == '':
             self._view.campoConfirmarContrasena.insert(0,'Confirmar contraseña')
             self._view.campoConfirmarContrasena.config(  
@@ -311,7 +258,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
     Input:  evento - con la descripcion del evento que la invoco
     Output: None
     """
-    def campoNombre_KeyRelease(self,evento):
+    def campoNombre_KeyRelease(self,_):
 
         nombre = self._view.campoNombre.get() 
 
@@ -339,7 +286,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
     Input:  evento - con la descripcion del evento que la invoco
     Output: None
     """
-    def campoContrasena_KeyRelease(self,evento):
+    def campoContrasena_KeyRelease(self,_):
 
         contrasena = self._view.campoContrasena.get()
 
@@ -374,7 +321,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
     Input:  evento - con la descripcion del evento que la invoco
     Output: None
     """
-    def campoConfirmarContrasena_KeyRelease(self,evento):
+    def campoConfirmarContrasena_KeyRelease(self,_):
 
         confirmacion = self._view.campoConfirmarContrasena.get()
 
@@ -406,7 +353,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
     Input:  evento - con la descripcion del evento que la invoco
     Output: None
     """
-    def etiquetaSeleccionarImagen_Click(self,evento):
+    def etiquetaSeleccionarImagen_Click(self,_):
 
         try:
             # Lanzar cuadro para seleccion de imagen

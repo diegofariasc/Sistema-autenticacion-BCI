@@ -190,7 +190,6 @@ class ControllerRecopilador(Controller):
         # Desaparecer botones para seleccionar origen de datos
         self.__viewRaiz.botonDescartarDatos.place(x=170, y=211, height=28, width=115)
         self.__viewRaiz.botonEscaneoEEG.place_forget()
-        self.__viewRaiz.botonCargarArchivo.place_forget()
 
         # Indicarle al segundo controller que los datos funcionan
         # y pasar un apuntador a los datos

@@ -20,7 +20,7 @@ class ControllerSelectorSeguridad(Controller):
     Input:  evento - con la descripcion del evento que la invoco
     Output: None
     """
-    def opcionSeguridadAlta_Click(self, evento):
+    def opcionSeguridadAlta_Click(self, _):
 
         # Revisar en que opcion de seguridad se encuentra posicionado el usuario
         opcionSeleccionada = self._view.canvas.coords(self._view.selector)[0]
@@ -45,7 +45,7 @@ class ControllerSelectorSeguridad(Controller):
     Input:  evento - con la descripcion del evento que la invoco
     Output: None
     """
-    def opcionSeguridadMedia_Click(self, evento):
+    def opcionSeguridadMedia_Click(self, _):
 
         # Revisar en que opcion de seguridad se encuentra posicionado el usuario
         opcionSeleccionada = self._view.canvas.coords(self._view.selector)[0]
@@ -70,7 +70,7 @@ class ControllerSelectorSeguridad(Controller):
     Input:  evento - con la descripcion del evento que la invoco
     Output: None
     """
-    def opcionSeguridadBaja_Click(self, evento):
+    def opcionSeguridadBaja_Click(self, _):
 
         # Revisar en que opcion de seguridad se encuentra posicionado el usuario
         opcionSeleccionada = self._view.canvas.coords(self._view.selector)[0]

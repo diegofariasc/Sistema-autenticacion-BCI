@@ -31,7 +31,7 @@ class ControllerPrincipal(Controller):
         print('100')
         exit(0)
 
-    def etiquetaImagenNuevoUsuario_Click(self, evento):
+    def etiquetaImagenNuevoUsuario_Click(self, _):
 
                 # Crear un nuevo view de crear usuario y relacionarlo con un controller
                 viewCrearUsuario = ViewCrearUsuario()
@@ -48,7 +48,7 @@ class ControllerPrincipal(Controller):
                 controllerCrearUsuario.inicializarView()
 
 
-    def etiquetaImagenDerecha_Click(self, evento):
+    def etiquetaImagenDerecha_Click(self, _):
 
         # Mover en 1 el indicador usuarioSeleccionado y reflejarlo
         # en el view
@@ -57,7 +57,7 @@ class ControllerPrincipal(Controller):
             self.__usuarioSeleccionado += 1
             self.__mostrarUsuarioSeleccionado()
 
-    def etiquetaImagenIzquierda_Click(self, evento):
+    def etiquetaImagenIzquierda_Click(self, _):
 
         # Mover en 1 el indicador usuarioSeleccionado y reflejarlo
         # en el view
@@ -66,7 +66,7 @@ class ControllerPrincipal(Controller):
             self.__usuarioSeleccionado -= 1
             self.__mostrarUsuarioSeleccionado()
 
-    def botonContrasena_Click(self,evento):        
+    def botonContrasena_Click(self,_):        
 
         # Desaparecer botones de metodos de ingreso 
         self._view.botonContrasena.place_forget()
@@ -98,7 +98,7 @@ class ControllerPrincipal(Controller):
         self._view.campoContrasena.select_clear()
         self._view.campoContrasena.select_range(0,'end')
 
-    def etiquetaVolverMetodoIngreso_Click(self,evento):
+    def etiquetaVolverMetodoIngreso_Click(self,_):
 
         # Reaparecer botones de metodos de autenticacion
         self._view.botonEscaneoEEG.place(x=135, y=345, height=28, width=135)
@@ -127,7 +127,7 @@ class ControllerPrincipal(Controller):
 
         self._view.canvas.focus_set()
 
-    def etiquetaImagenIngresar_Click(self,evento):
+    def etiquetaImagenIngresar_Click(self,_):
 
         if  self._model.autenticar(self.idUsuarioSeleccionado, 
             self._view.campoContrasena.get()):
@@ -166,7 +166,7 @@ class ControllerPrincipal(Controller):
     Input:  evento - con la descripcion del evento que la invoco
     Output: None
     """
-    def campoContrasena_Focus(self,evento):
+    def campoContrasena_Focus(self,_):
         if self._view.campoContrasena.get() == 'Contraseña':
             self._view.campoContrasena.delete(0,Tkinter.END)
             self._view.campoContrasena.config(  
@@ -182,7 +182,7 @@ class ControllerPrincipal(Controller):
     Input:  evento - con la descripcion del evento que la invoco
     Output: None
     """
-    def campoContrasena_LostFocus(self,evento):
+    def campoContrasena_LostFocus(self,_):
         if self._view.campoContrasena.get() == '':
             self._view.campoContrasena.insert(0,'Contraseña')
             self._view.campoContrasena.config(  
@@ -241,7 +241,7 @@ class ControllerPrincipal(Controller):
                 cursor = 'arrow' 
             ) # End config
 
-    def botonUsarEscaneoEEG_Click(self, evento):
+    def botonUsarEscaneoEEG_Click(self, _):
 
         # Solicitar la confirmacion antes de iniciar
         iniciar = MessageBox.askyesno(title='Iniciar grabación',

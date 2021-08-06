@@ -26,9 +26,7 @@ class Lector:
         if tipoCasco != Lector.CYTON and tipoCasco != Lector.SIMULADOR:
             raise AttributeError("El casco especificado no es valido")
 
-        # Restar 1 a cada numero de canal para poder expresarlos 
-        # sin iniciar en 0 fuera de la clase 
-        self.__canales = [numero -1 for numero in canales]
+        self.__canales = canales
 
         # Construccion y establecimiento de parametros
         BoardShim.disable_board_logger()                        # Desactivar log de BrainFlow
@@ -60,17 +58,3 @@ class Lector:
 
         # Devolver datos de acuerdo a fs y canales
         return datos[self.__canales, (self.__fs * segundosRemover) : self.__fs * duracion - (self.__fs * segundosRemover)]
-
-
-
-# # Prueba de la clase con exp de 2 segundos
-# # con canales 1-3
-# def main():
-
-#     lector = Lector(Lector.SIMULADOR, [1,2,3], puerto="")
-#     datos = lector.recopilarDatosExperimento(5)
-#     print("Forma:", shape(datos))
-#     print(datos)
-
-# if __name__ == "__main__":
-#     main()

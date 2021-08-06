@@ -203,23 +203,6 @@ class ViewCrearUsuario(View):
         self.botonEscaneoEEG.pack()
         self.botonEscaneoEEG.place(x=170, y=211, height=28, width=115)
 
-        # Boton de cargar archivo EEG
-        self.imagenCargarArchivo = Image.open("assets/ViewCrearUsuario/importarDatos.png")
-        self.renderCargarArchivo  = ImageTk.PhotoImage(self.imagenCargarArchivo, master=self.ventana)
-        self.botonCargarArchivo = Tkinter.Button( 
-            self.canvas, 
-            fg=View.COLOR_CONTRASTE, 
-            text ="Cargar registro", 
-            font="SegoeUI 11 normal",
-            highlightbackground=View.COLOR_FONDO,
-            image=self.renderCargarArchivo,
-            compound = Tkinter.LEFT,
-            cursor='hand2'
-        ) # End button
-        self.botonCargarArchivo.pack()
-        self.botonCargarArchivo.place(x=290, y=211, height=28, width=115)
-
-
         # Boton de eliminar origen de datos EEG
         self.imagenDescartarDatos = Image.open("assets/ViewCrearUsuario/descartar.png")
         self.renderDescartarDatos  = ImageTk.PhotoImage(self.imagenDescartarDatos, master=self.ventana)
@@ -419,7 +402,6 @@ class ViewCrearUsuario(View):
 
         # Boton cargar registros y recopilar informacion EEG
         self.botonEscaneoEEG.bind("<Button-1>", controller.botonRegistrarEEG_Click)
-        self.botonCargarArchivo.bind("<Button-1>", controller.botonCargarArchivo_Click)
 
         # Boton para anular seleccion de origen de datos EEG
         self.botonDescartarDatos.bind("<Button-1>", controller.botonDescartarDatos_Click)

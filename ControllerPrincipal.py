@@ -75,6 +75,7 @@ class ControllerPrincipal(Controller):
         # Desaparecer botones de metodos de ingreso 
         self._view.botonContrasena.place_forget()
         self._view.botonEscaneoEEG.place_forget()
+        self._view.botonGrabacionMAT.place_forget()
 
         # Mostrar campo y opciones para ingresar por contrasena
         self._view.campoContrasena.place(x=165, y=345, height=28, width=170)
@@ -105,8 +106,9 @@ class ControllerPrincipal(Controller):
     def etiquetaVolverMetodoIngreso_Click(self,_):
 
         # Reaparecer botones de metodos de autenticacion
-        self._view.botonEscaneoEEG.place(x=135, y=345, height=28, width=135)
-        self._view.botonContrasena.place(x=280, y=345, height=28, width=135)
+        self._view.botonEscaneoEEG.place(x=58, y=345, height=28, width=135)
+        self._view.botonContrasena.place(x=203, y=345, height=28, width=135)
+        self._view.botonGrabacionMAT.place(x=348, y=345, height=28, width=135)
 
         # Reaparecer opciones de autenticacion por contrasena    
         self._view.campoContrasena.place_forget()
@@ -327,57 +329,64 @@ class ControllerPrincipal(Controller):
 
     def botonUsarArchivoMAT_click(self, _):
         
-        senalProcesada_C1, senalProcesada_C2 = self._model.obtenerGrabacionMAT()
-        
-        # Recuperar los datos de entrenamiento de la base de datos
-        entrenamiento_C1 = self._model.obtenerExperimentos(
-            self.idUsuarioSeleccionado,
-            Movimiento.TIPO_C1
-        ) # End obtenerExperimentos
-        entrenamiento_C2 = self._model.obtenerExperimentos(
-            self.idUsuarioSeleccionado,
-            Movimiento.TIPO_C2
-        ) # End obtenerExperimentos
-
-        # Obtener los parametros de autenticacion
-        # i.e. las fronteras, medias y desviaciones
-        parametros_C1 = self._model.obtenerParametrosAutenticacion(entrenamiento_C1)
-        parametros_C2 = self._model.obtenerParametrosAutenticacion(entrenamiento_C2)
-
-        # Determinar el estado de aprobacion
-        estados_C1 = self._model.obtenerAprobados(parametros_C1, senalProcesada_C1, self.idUsuarioSeleccionado)
-        estados_C2 = self._model.obtenerAprobados(parametros_C2, senalProcesada_C2, self.idUsuarioSeleccionado)
-        aprueba = self._model.determinarEstadoAutenticacion(
-            self.idUsuarioSeleccionado,
-            estados_C1, estados_C2
-        ) # End determinarEstadoAutenticacion
-        
-        if aprueba:
-            if self.hayUsuarioPreseleccionado:
-                print('200')
-                exit(0)
-            else:
-
-                # Crear un nuevo view de perfil y relacionarlo con un controller
-                viewIniciado = ViewIniciado()
-                controllerIniciado = ControllerIniciado( 
-                    viewIniciado, 
-                    self._model, 
-                    self.idUsuarioSeleccionado
-                ) # End construct
-                
-                # Cerrar ventana principal
-                self._view.ventana.destroy()
-                self._view.ventana.quit()
-                
-                controllerIniciado.inicializarView()
-
-        else:
-            MessageBox.showinfo(
-                "Error al autenticar",
-                "Sus señales no han podido probar su identidad"
-            ) # End showinfo
+        try:
+            senalProcesada_C1, senalProcesada_C2 = self._model.obtenerGrabacionMAT()
             
+            # Recuperar los datos de entrenamiento de la base de datos
+            entrenamiento_C1 = self._model.obtenerExperimentos(
+                self.idUsuarioSeleccionado,
+                Movimiento.TIPO_C1
+            ) # End obtenerExperimentos
+            entrenamiento_C2 = self._model.obtenerExperimentos(
+                self.idUsuarioSeleccionado,
+                Movimiento.TIPO_C2
+            ) # End obtenerExperimentos
+
+            # Obtener los parametros de autenticacion
+            # i.e. las fronteras, medias y desviaciones
+            parametros_C1 = self._model.obtenerParametrosAutenticacion(entrenamiento_C1)
+            parametros_C2 = self._model.obtenerParametrosAutenticacion(entrenamiento_C2)
+
+            # Determinar el estado de aprobacion
+            estados_C1 = self._model.obtenerAprobados(parametros_C1, senalProcesada_C1, self.idUsuarioSeleccionado)
+            estados_C2 = self._model.obtenerAprobados(parametros_C2, senalProcesada_C2, self.idUsuarioSeleccionado)
+            aprueba = self._model.determinarEstadoAutenticacion(
+                self.idUsuarioSeleccionado,
+                estados_C1, estados_C2
+            ) # End determinarEstadoAutenticacion
+            
+            if aprueba:
+                if self.hayUsuarioPreseleccionado:
+                    print('200')
+                    exit(0)
+                else:
+
+                    # Crear un nuevo view de perfil y relacionarlo con un controller
+                    viewIniciado = ViewIniciado()
+                    controllerIniciado = ControllerIniciado( 
+                        viewIniciado, 
+                        self._model, 
+                        self.idUsuarioSeleccionado
+                    ) # End construct
+                    
+                    # Cerrar ventana principal
+                    self._view.ventana.destroy()
+                    self._view.ventana.quit()
+                    
+                    controllerIniciado.inicializarView()
+
+            else:
+                MessageBox.showinfo(
+                    "Error al autenticar",
+                    "Sus señales no han podido probar su identidad"
+                ) # End showinfo
+        
+        except ValueError:
+            MessageBox.showerror(title='Datos incorrectos',
+            message='Debe seleccionar un archivo MATLAB válido i.e., ' + \
+                    'con dos clases denominadas \'class1\' y \'class2\' de CxMxE ' + \
+                    'con una sesión EEG para entrenar')
+
 
         # Si el sistema determino que el sujeto es correcto
         # reentrenar

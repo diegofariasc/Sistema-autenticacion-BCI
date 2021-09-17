@@ -222,8 +222,8 @@ class ControllerRecopilador(Controller, Thread):
         parametros_C2 = self._model.obtenerParametrosAutenticacion(entrenamiento_C2)
 
         # Determinar el estado de aprobacion
-        estados_C1 = self._model.obtenerAprobados(parametros_C1, senalProcesada_C1, self.idUsuarioSeleccionado)
-        estados_C2 = self._model.obtenerAprobados(parametros_C2, senalProcesada_C2, self.idUsuarioSeleccionado)
+        estados_C1 = self._model.obtenerAprobados(parametros_C1, senalProcesada_C1, self.__controllerRaiz.idUsuarioSeleccionado)
+        estados_C2 = self._model.obtenerAprobados(parametros_C2, senalProcesada_C2, self.__controllerRaiz.idUsuarioSeleccionado)
         aprueba = self._model.determinarEstadoAutenticacion(
             self.__controllerRaiz.idUsuarioSeleccionado,
             estados_C1, estados_C2

@@ -1,6 +1,7 @@
 from math import sin
 from pickle import TRUE
 from random import randint, shuffle
+from tkinter.filedialog import askopenfilenames
 import mysql.connector
 import io
 
@@ -8,10 +9,12 @@ from PIL            import  Image
 from numpy          import  array, transpose, shape, std, \
                             mean, delete, median, add, subtract, \
                             where, logical_and, append, vstack, \
-                            prod, min, reshape
+                            prod, reshape
+from numpy          import  min as minArr
 from numpy.random   import  rand
 from scipy.signal   import  butter, lfilter
 from scipy.stats    import  iqr, pearsonr, norm, median_absolute_deviation as mad
+from scipy.io       import  loadmat
 
 class Model():
 
@@ -170,6 +173,38 @@ class Model():
 
 
     """
+    El metodo permite recuperar el numero de experimentos
+    disponibles de un usuario
+    Input:  None
+    Output: numpy array
+    """
+    def obtenerMuestrasDisponibles(self, usuario):
+
+        # Recuperar el numero de dimensiones
+        cursor = self.__connection.cursor()
+        query = "SELECT MAX(numeroExperimento) + 1 FROM EXPERIMENTO " +\
+                "WHERE usuario = %s" % usuario
+
+        cursor.execute( query )
+        return cursor.fetchall()[0][0]
+
+    """
+    El metodo permite recuperar el numero de sesiones por 
+    las que ha pasado un usuario
+    Input:  None
+    Output: numpy array
+    """
+    def obtenerSesionesEntrenamiento(self, usuario):
+
+        # Recuperar el numero de dimensiones
+        cursor = self.__connection.cursor()
+        query = "SELECT sesionesRegistradas FROM USUARIO " +\
+                "WHERE id = %s" % usuario
+
+        cursor.execute( query )
+        return cursor.fetchall()[0][0]
+
+    """
     El metodo permite recuperar el numero de usuarios
     registrados en el sistema
     Input:  None
@@ -223,18 +258,18 @@ class Model():
         # Multiplicar las probabilidades sobre el eje 0 i.e., todas 
         # las dimensiones del vector caracteristico y finalmente obtener el menor
         # para obtener la frontera de la curva gaussiana
-        frontera_alt = min(prod(alturas, axis=0))
+        frontera_alt = minArr(prod(alturas, axis=0))
 
         # Obtener las correlaciones entre cada vector de entrenamiento y el medio,
         # despues buscar el menor para obtener la frontera de correlacion
         correlaciones = array([pearsonr(datos[:,n_exp], medias)[0] 
                             for n_exp in range(n_experimentos)])
-        frontera_correl = min(correlaciones)
+        frontera_correl = minArr(correlaciones)
 
         # Devolver medias, desviaciones y fronteras
         return (medias, desviaciones, frontera_alt, frontera_correl)
 
-    def obtenerAprobados(self, parametros, datos):
+    def obtenerAprobados(self, parametros, datos, usuario):
 
         # Desempaquetar parametros
         medias, desviaciones, frontera_alt, frontera_correl = parametros
@@ -249,11 +284,16 @@ class Model():
         correlaciones = array([pearsonr(datos[:,n_exp], medias)[0] 
                             for n_exp in range(n_experimentos)])
 
+        cursor = self.__connection.cursor()
+        query = ("SELECT nivelSeguridad FROM USUARIO WHERE id=%s") % (usuario)
+        cursor.execute( query )
+        nivelSeguridad = cursor.fetchall()[0][0]
+
         # Usando fronteras y datos de clasificacion contabilizar cuantos 
         # experimentos se aprueban
-        resultadosAprobacion = [altura >= frontera_alt and correl >= frontera_correl 
+        resultadosAprobacion = [(nivelSeguridad != 'maximo' or altura > frontera_alt) and 
+                                correl >= frontera_correl - (0.014 if nivelSeguridad != 'maximo' else 0)
                                 for altura, correl in zip(alturas, correlaciones)]
-
         return resultadosAprobacion
 
     def determinarEstadoAutenticacion(self, usuario, resultados_C1, resultados_C2):
@@ -336,32 +376,27 @@ class Model():
         senal_C1 = array(senal_C1)
         senal_C2 = array(senal_C2)
 
-        #print("Inicial\t\t\t(exp, canales, muestras)\t\t=> C1:", shape(senal_C1), "\tC2:", shape(senal_C2))
         senalTranspuesta_C1 = transpose(senal_C1, (1, 2, 0))
         senalTranspuesta_C2 = transpose(senal_C2, (1, 2, 0))
-        #print("Transpuesta\t\t(canales, muestras, exp)\t\t=> C1:", shape(senalTranspuesta_C1), "\tC2:", shape(senalTranspuesta_C2))
 
         # Filtrar en las bandas generales
         senalFiltrada_C1 = self.__filtrar(senalTranspuesta_C1, Model.BANDAS_GENERALES_C1)
         senalFiltrada_C2 = self.__filtrar(senalTranspuesta_C2, Model.BANDAS_GENERALES_C2)
-        #print("Filtrado\t\t(bandas, canales, muestras, exp)\t=> C1:", shape(senalFiltrada_C1), "\tC2:", shape(senalFiltrada_C2))
 
         # Extraer caracteristicas
         caracteristicas_C1 = self.__extraerCaracteristicas(senalFiltrada_C1, Model.FUNCIONES)
         caracteristicas_C2 = self.__extraerCaracteristicas(senalFiltrada_C2, Model.FUNCIONES)
-        #print("Extraccion\t\t(funciones, bandas canales, exp)\t=> C1:", shape(caracteristicas_C1), "\tC2:", shape(caracteristicas_C2))
 
         # Remocion de outliers
         sinOutliers_C1 = self.__removerOutliers(caracteristicas_C1, 3.5, exp_conservar)
         sinOutliers_C2 = self.__removerOutliers(caracteristicas_C2, 3.5, exp_conservar)
-        #print("Remocion\t\t(funciones, bandas, canales, exp)\t=> C1:", shape(sinOutliers_C1), "\tC2:", shape(sinOutliers_C2))
         
         # Aplanado de datos
         aplanados_C1 = self.__aplanarDatos(sinOutliers_C1)
         aplanados_C2 = self.__aplanarDatos(sinOutliers_C2)
-        #print("Aplanado\t\t('caracteristicas', exp)\t\t=> C1:", shape(aplanados_C1), "\t\tC2:", shape(aplanados_C2))
         
         return (aplanados_C1, aplanados_C2)
+
 
     def obtenerUltimoUsuarioInsertado(self):
 
@@ -370,28 +405,6 @@ class Model():
         query = "SELECT MAX(id) FROM USUARIO"
         cursor.execute( query )
         return cursor.fetchall()[0][0]
-
-    def obtenerMuestrasDisponibles(self, usuario):
-
-        # Obtener el numero de usuario agregado
-        cursor = self.__connection.cursor()
-        query = "SELECT sesionesRegistradas FROM USUARIO WHERE id=%s" % usuario
-        cursor.execute( query )
-        return cursor.fetchall()[0][0]
-
-    def obtenerCalidadSenales(self, usuario):
-
-        datos = self.obtenerExperimentos(usuario,'')
-
-        # Calcular medias para cada dimension
-        medias = mean(datos, axis=1)
-
-        # Extraer el numero de dimensiones y experimentos
-        _, n_experimentos = shape(datos)
-
-        correlaciones = array([pearsonr(datos[:,n_exp], medias)[0] 
-                            for n_exp in range(n_experimentos)])
-        return mean(correlaciones)
 
     def notificarGrabacionSesion(self, usuario):
 
@@ -563,3 +576,48 @@ class Model():
 
         # Redimensionarlos para compactar las 3 primeras dimensiones
         return reshape(datos, (n_dimensiones, n_experimentos))
+
+    def obtenerGrabacionMAT(self):
+
+        # Abrir un dialogo de apertura
+        archivos = askopenfilenames(
+            defaultextension="mat",
+            filetypes =[('Grabación en formato MAT', '*.mat')],
+            title="Seleccionar grabación"
+        ) # End asksaveasfile
+
+        # Verificar si se ha seleccionado un archivo
+        if archivos != None and len(archivos) == 1:
+            return self.__preprocesarGrabacionMAT(archivos[0])
+        else:
+            raise ValueError
+
+    def __preprocesarGrabacionMAT(self, archivo):
+                
+        # Cargar datos
+        datos = loadmat(archivo)
+        datos_C1, sesionA_C2 = datos['class1'], datos['class2']
+
+        # Filtrar en las bandas generales
+        senalFiltrada_C1 = self.__filtrar(datos_C1, Model.BANDAS_GENERALES_C1)
+        senalFiltrada_C2 = self.__filtrar(sesionA_C2, Model.BANDAS_GENERALES_C2)
+
+        # Extraer caracteristicas
+        caracteristicas_C1 = self.__extraerCaracteristicas(senalFiltrada_C1, Model.FUNCIONES)
+        caracteristicas_C2 = self.__extraerCaracteristicas(senalFiltrada_C2, Model.FUNCIONES)
+
+        # Remocion de outliers
+        sinOutliers_C1 = self.__removerOutliers(caracteristicas_C1, 3.5, 1)
+        sinOutliers_C2 = self.__removerOutliers(caracteristicas_C2, 3.5, 1)
+
+        # Aplanado de datos
+        aplanados_C1 = self.__aplanarDatos(sinOutliers_C1)
+        aplanados_C2 = self.__aplanarDatos(sinOutliers_C2)
+
+        # Evitar beneficio del sistema en esta metodologia seleccionando hasta 5 experimentos
+        seleccionados = [randint(0,min(shape(aplanados_C1)[1],shape(aplanados_C2)[1])-1) for _ in range(5)] 
+
+        aplanados_C1 = aplanados_C1[:,seleccionados]
+        aplanados_C2 = aplanados_C2[:,seleccionados]
+
+        return (aplanados_C1, aplanados_C2)

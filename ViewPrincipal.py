@@ -143,7 +143,7 @@ class ViewPrincipal(ViewPanel):
             compound = Tkinter.LEFT,
             cursor='hand2'
         ) # End button
-        self.botonEscaneoEEG.place(x=135, y=345, height=28, width=135)
+        self.botonEscaneoEEG.place(x=58, y=345, height=28, width=135)
 
         # Boton de contrasena
         self.imagenContrasena = Image.open("assets/ViewPrincipal/contrasena.png")
@@ -158,7 +158,22 @@ class ViewPrincipal(ViewPanel):
             compound = Tkinter.LEFT,
             cursor='hand2'
         ) # End button
-        self.botonContrasena.place(x=280, y=345, height=28, width=135)
+        self.botonContrasena.place(x=203, y=345, height=28, width=135)
+
+        # Boton de archivo MAT
+        self.imagenGrabacionMAT = Image.open("assets/ViewPrincipal/grabacionMat.png")
+        self.renderGrabacionMAT  = ImageTk.PhotoImage(self.imagenGrabacionMAT, master=self.ventana)
+        self.botonGrabacionMAT = Tkinter.Button( 
+            self.canvas, 
+            fg=View.COLOR_CONTRASTE, 
+            text ="Usar grabación", 
+            font="SegoeUI 11 normal",
+            highlightbackground=View.COLOR_FONDO,
+            image=self.renderGrabacionMAT,
+            compound = Tkinter.LEFT,
+            cursor='hand2'
+        ) # End button
+        self.botonGrabacionMAT.place(x=348, y=345, height=28, width=135)
 
         # Campo contrasena
         self.campoContrasena = Tkinter.Entry(

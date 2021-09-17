@@ -24,7 +24,6 @@ class ViewIniciado(ViewPanel):
             image=self.renderCerrarSesion,
             cursor='hand2'
         ) # End label
-        self.etiquetaImagenCerrarSesion.pack()
         self.etiquetaImagenCerrarSesion.place(x=25, y=25, height=45, width=45)
 
         # Etiqueta correspondiente al boton de eliminar usuario
@@ -35,7 +34,6 @@ class ViewIniciado(ViewPanel):
             fg=View.COLOR_TEXTO_PANEL,
             font="SegoeUI 11 normal"
         ) # End label
-        self.etiquetaDescripcionCerrarSesion.pack()
         self.etiquetaDescripcionCerrarSesion.place(x=10, y=70, height=20, width=75)
 
         # Boton para eliminar un usuario
@@ -47,7 +45,6 @@ class ViewIniciado(ViewPanel):
             image=self.renderEliminarUsuario,
             cursor='hand2'
         ) # End label
-        self.etiquetaImagenEliminarUsuario.pack()
         self.etiquetaImagenEliminarUsuario.place(x=110, y=25, height=45, width=45)
 
         # Etiqueta correspondiente al boton de eliminar usuario
@@ -58,7 +55,6 @@ class ViewIniciado(ViewPanel):
             fg=View.COLOR_TEXTO_PANEL,
             font="SegoeUI 11 normal"
         ) # End label
-        self.etiquetaDescripcionEliminarUsuario.pack()
         self.etiquetaDescripcionEliminarUsuario.place(x=95, y=70, height=20, width=75)
 
 
@@ -71,7 +67,6 @@ class ViewIniciado(ViewPanel):
             bg=View.COLOR_FONDO,
             image=self.renderUsuario,
         ) # End label
-        self.etiquetaImagenUsuario.pack()
         self.etiquetaImagenUsuario.place(x=10, y=105, height=60, width=60)
 
         # Etiqueta con el nombre del usuario
@@ -83,7 +78,6 @@ class ViewIniciado(ViewPanel):
             font="SegoeUI 16 normal",
             anchor='w'
         ) # End label
-        self.etiquetaNombreUsuario.pack()
         self.etiquetaNombreUsuario.place(x=80, y=107, height=20, width=View.LARGO)
 
         # Etiqueta con la fecha de registro del usuario
@@ -95,7 +89,6 @@ class ViewIniciado(ViewPanel):
             font="SegoeUI 12 normal",
             anchor='w'
         ) # End label
-        self.etiquetaFechaRegistro.pack()
         self.etiquetaFechaRegistro.place(x=80, y=127, height=20, width=View.LARGO)
 
         # Imagen de muestras
@@ -106,7 +99,6 @@ class ViewIniciado(ViewPanel):
             bg=View.COLOR_FONDO,
             image=self.renderMuestras
         ) # End label
-        self.etiquetaImagenMuestras.pack()
         self.etiquetaImagenMuestras.place(x=80, y=148, height=16, width=16)
 
         # Etiqueta con el numero de muestras disponibles
@@ -118,8 +110,29 @@ class ViewIniciado(ViewPanel):
             font="SegoeUI 12 normal",
             anchor='w'
         ) # End label
-        self.etiquetaMuestras.pack()
         self.etiquetaMuestras.place(x=101, y=147, height=16, width=200)
+
+        # Imagen de sesiones registradas
+        self.imagenSesionesRegistradas = Image.open("assets/ViewIniciado/sesiones.png")
+        self.renderSesionesRegistradas= ImageTk.PhotoImage(self.imagenSesionesRegistradas, master=self.ventana)
+        self.etiquetaImagenSesionesRegistradas = Tkinter.Label( 
+            self.canvas, 
+            bg=View.COLOR_FONDO,
+            image=self.renderSesionesRegistradas
+        ) # End label
+        self.etiquetaImagenSesionesRegistradas.place(x=260, y=148, height=16, width=16)
+
+        # Etiqueta con el numero de sesiones registradas
+        self.etiquetaSesionesRegistradas= Tkinter.Label( 
+            self.canvas, 
+            text='Sesiones registradas: 0',
+            bg=View.COLOR_FONDO,
+            fg=ViewAuxiliar.obtenerColor(124,124,124),
+            font="SegoeUI 12 normal",
+            anchor='w'
+        ) # End label
+        self.etiquetaSesionesRegistradas.place(x=281, y=147, height=16, width=200)
+
 
         # Etiqueta descriptiva de los niveles de seguridad 
         self.etiquetaDescripcionNiveles= Tkinter.Label( 
@@ -129,7 +142,6 @@ class ViewIniciado(ViewPanel):
             fg=View.COLOR_CONTRASTE,
             font="SegoeUI 13 normal"
         ) # End label
-        self.etiquetaDescripcionNiveles.pack()
         self.etiquetaDescripcionNiveles.place(x=0, y=180, height=20, width=View.LARGO)
 
         # Imagen de seguridad baja
@@ -141,7 +153,6 @@ class ViewIniciado(ViewPanel):
             image=self.renderSeguridadBaja,
             cursor='hand2'
         ) # End label
-        self.etiquetaImagenSeguridadBaja.pack()
         self.etiquetaImagenSeguridadBaja.place(x=80, y=220, height=90, width=120)
 
         # Imagen de seguridad media
@@ -153,7 +164,6 @@ class ViewIniciado(ViewPanel):
             image=self.renderSeguridadMedia,
             cursor='hand2'
         ) # End label
-        self.etiquetaImagenSeguridadMedia.pack()
         self.etiquetaImagenSeguridadMedia.place(x=220, y=220, height=90, width=120)
 
         # Imagen de seguridad alta
@@ -165,7 +175,6 @@ class ViewIniciado(ViewPanel):
             image=self.renderSeguridadAlta,
             cursor='hand2'
         ) # End label
-        self.etiquetaImagenSeguridadAlta.pack()
         self.etiquetaImagenSeguridadAlta.place(x=360, y=224, height=90, width=120)
 
         # Etiqueta de titulo seguridad baja
@@ -177,7 +186,6 @@ class ViewIniciado(ViewPanel):
             font="SegoeUI 14 normal",
             cursor='hand2'
         ) # End label
-        self.etiquetaTituloSeguridadBaja.pack()
         self.etiquetaTituloSeguridadBaja.place(x=80, y=312, height=20, width=120)
 
         # Etiqueta de titulo seguridad media
@@ -189,7 +197,6 @@ class ViewIniciado(ViewPanel):
             font="SegoeUI 14 normal",
             cursor='hand2'
         ) # End label
-        self.etiquetaTituloSeguridadMedia.pack()
         self.etiquetaTituloSeguridadMedia.place(x=220, y=312, height=20, width=120)
 
         # Etiqueta de titulo seguridad alta
@@ -201,7 +208,6 @@ class ViewIniciado(ViewPanel):
             font="SegoeUI 14 normal",
             cursor='hand2'
         ) # End label
-        self.etiquetaTituloSeguridadAlta.pack()
         self.etiquetaTituloSeguridadAlta.place(x=360, y=312, height=20, width=120)
 
         # Etiqueta de descripcion seguridad baja
@@ -213,7 +219,6 @@ class ViewIniciado(ViewPanel):
             font="SegoeUI 10 normal",
             cursor='hand2'
         ) # End label
-        self.etiquetaDescripcionSeguridadBaja.pack()
         self.etiquetaDescripcionSeguridadBaja.place(x=80, y=335, height=30, width=120)
 
         # Etiqueta de descripcion seguridad media
@@ -225,7 +230,6 @@ class ViewIniciado(ViewPanel):
             font="SegoeUI 10 normal",
             cursor='hand2'
         ) # End label
-        self.etiquetaDescripcionSeguridadMedia.pack()
         self.etiquetaDescripcionSeguridadMedia.place(x=220, y=335, height=30, width=120)
 
         # Etiqueta de descripcion seguridad alta
@@ -237,7 +241,6 @@ class ViewIniciado(ViewPanel):
             font="SegoeUI 10 normal",
             cursor='hand2'
         ) # End label
-        self.etiquetaDescripcionSeguridadAlta.pack()
         self.etiquetaDescripcionSeguridadAlta.place(x=360, y=335, height=30, width=120)
 
         # Crear panel para mostrar seleccion de nivel de seguridad

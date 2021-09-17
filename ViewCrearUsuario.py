@@ -25,7 +25,6 @@ class ViewCrearUsuario(View):
             fg=View.COLOR_CONTRASTE,
             font="SegoeUI 15 normal"
         ) # End label
-        self.etiquetaDescripcionVentana.pack()
         self.etiquetaDescripcionVentana.place(x=0, y=20, height=20, width=View.LARGO)
 
         # Etiqueta descriptiva de la labor en la ventana
@@ -36,7 +35,7 @@ class ViewCrearUsuario(View):
             fg=View.COLOR_CONTRASTE,
             font="SegoeUI 13 normal"
         ) # End label
-        self.etiquetaInstruccion.pack()
+
         self.etiquetaInstruccion.place(x=0, y=40, height=20, width=View.LARGO)
 
         # Etiqueta seleccionar imagen
@@ -49,7 +48,6 @@ class ViewCrearUsuario(View):
             anchor='w',
             cursor='hand2'
         ) # End label
-        self.etiquetaSeleccionarImagen.pack()
         self.etiquetaSeleccionarImagen.place(x=70, y=165, height=20, width=100)
 
         # Imagen de usuario
@@ -61,7 +59,7 @@ class ViewCrearUsuario(View):
             bg=View.COLOR_FONDO,
             image=self.renderUsuario,
         ) # End label
-        self.etiquetaImagenUsuario.pack()
+
         self.etiquetaImagenUsuario.place(x=70, y=80, height=80, width=80)
 
         # Imagen campo nombre usuario
@@ -73,7 +71,6 @@ class ViewCrearUsuario(View):
             image=self.renderNombreUsuario
         ) # End label
 
-        self.etiquetaImagenNombreUsuario.pack()
         self.etiquetaImagenNombreUsuario.place(x=170, y=85, height=20, width=20)
 
         # Campo nombre de usuario
@@ -86,7 +83,6 @@ class ViewCrearUsuario(View):
         ) # End entry
         self.campoNombre.insert(0, 'Nombre de usuario')
         
-        self.campoNombre.pack()
         self.campoNombre.place(x=192, y=81, height=28, width=250)
 
         # Imagenes validaciones
@@ -102,7 +98,6 @@ class ViewCrearUsuario(View):
             image=self.renderValidacionError
         ) # End label
 
-        self.etiquetaImagenValidacionNombreUsuario.pack()
         self.etiquetaImagenValidacionNombreUsuario.place(x=447, y=85, height=20, width=20)
 
 
@@ -115,7 +110,6 @@ class ViewCrearUsuario(View):
             image=self.renderContrasena
         ) # End label
 
-        self.etiquetaImagenContrasena.pack()
         self.etiquetaImagenContrasena.place(x=170, y=115, height=20, width=20)
 
         # Campo contrasena
@@ -127,8 +121,7 @@ class ViewCrearUsuario(View):
             fg=ViewAuxiliar.obtenerColor(124,124,124)
         ) # End entry
         self.campoContrasena.insert(0, 'Contraseña auxiliar')
-        
-        self.campoContrasena.pack()
+
         self.campoContrasena.place(x=192, y=111, height=28, width=250)
 
         # Imagen validacion contrasena
@@ -138,7 +131,6 @@ class ViewCrearUsuario(View):
             image=self.renderValidacionError
         ) # End label
 
-        self.etiquetaImagenValidacionContrasena.pack()
         self.etiquetaImagenValidacionContrasena.place(x=447, y=111, height=20, width=20)
 
         # Imagen campo confirmar contrasena
@@ -148,7 +140,6 @@ class ViewCrearUsuario(View):
             image=self.renderContrasena
         ) # End label
 
-        self.etiquetaImagenConfirmarContrasena.pack()
         self.etiquetaImagenConfirmarContrasena.place(x=170, y=145, height=20, width=20)
 
         # Campo confirmar contrasena
@@ -161,7 +152,6 @@ class ViewCrearUsuario(View):
         ) # End entry
         self.campoConfirmarContrasena.insert(0, 'Confirmar contraseña')
         
-        self.campoConfirmarContrasena.pack()
         self.campoConfirmarContrasena.place(x=192, y=141, height=28, width=250)
 
         # Imagen validacion contrasena
@@ -171,19 +161,17 @@ class ViewCrearUsuario(View):
             image=self.renderValidacionError
         ) # End label
 
-        self.etiquetaImagenValidacionConfirmarContrasena.pack()
         self.etiquetaImagenValidacionConfirmarContrasena.place(x=447, y=141, height=20, width=20)
 
         # Etiqueta descriptiva de la seccion de datos EEG
         self.etiquetaSeccionEEG= Tkinter.Label( 
             self.canvas, 
-            text='Datos de entrenamiento EEG: No registrados',
+            text='Datos de entrenamiento EEG: No proporcionados',
             bg=View.COLOR_FONDO,
             fg=ViewAuxiliar.obtenerColor(94,94,94),
             font="SegoeUI 11 normal",
             anchor='w'
         ) # End label
-        self.etiquetaSeccionEEG.pack()
         self.etiquetaSeccionEEG.place(x=193, y=191, height=20, width=350)
 
         # Boton de escaneo EEG
@@ -200,8 +188,23 @@ class ViewCrearUsuario(View):
             cursor='hand2'
         ) # End button
 
-        self.botonEscaneoEEG.pack()
         self.botonEscaneoEEG.place(x=170, y=211, height=28, width=115)
+
+        # Boton de grabacion
+        self.imagenGrabacionMat = Image.open("assets/ViewPrincipal/grabacionMAT.png")
+        self.renderGrabacionMat  = ImageTk.PhotoImage(self.imagenGrabacionMat, master=self.ventana)
+        self.botonGrabacionMat = Tkinter.Button( 
+            self.canvas, 
+            fg=View.COLOR_CONTRASTE, 
+            text ="Grabación MAT", 
+            font="SegoeUI 11 normal",
+            highlightbackground=View.COLOR_FONDO,
+            image=self.renderGrabacionMat,
+            compound = Tkinter.LEFT,
+            cursor='hand2'
+        ) # End button
+
+        self.botonGrabacionMat.place(x=290, y=211, height=28, width=115)
 
         # Boton de eliminar origen de datos EEG
         self.imagenDescartarDatos = Image.open("assets/ViewCrearUsuario/descartar.png")
@@ -225,7 +228,6 @@ class ViewCrearUsuario(View):
             image=self.renderValidacionError
         ) # End label
 
-        self.etiquetaImagenValidacionDatosEEG.pack()
         self.etiquetaImagenValidacionDatosEEG.place(x=170, y=190, height=20, width=20)
 
 
@@ -237,7 +239,7 @@ class ViewCrearUsuario(View):
             fg=View.COLOR_CONTRASTE,
             font="SegoeUI 13 normal"
         ) # End label
-        self.etiquetaInstruccion.pack()
+
         self.etiquetaInstruccion.place(x=0, y=261, height=20, width=View.LARGO)
 
         # Crear panel para mostrar seleccion de nivel de seguridad
@@ -257,7 +259,7 @@ class ViewCrearUsuario(View):
             image=self.renderSeguridadBaja,
             cursor='hand2'
         ) # End label
-        self.etiquetaImagenSeguridadBaja.pack()
+
         self.etiquetaImagenSeguridadBaja.place(x=80, y=290, height=90, width=120)
 
         # Imagen de seguridad media
@@ -269,7 +271,7 @@ class ViewCrearUsuario(View):
             image=self.renderSeguridadMedia,
             cursor='hand2'
         ) # End label
-        self.etiquetaImagenSeguridadMedia.pack()
+
         self.etiquetaImagenSeguridadMedia.place(x=220, y=290, height=90, width=120)
 
         # Imagen de seguridad alta
@@ -281,7 +283,7 @@ class ViewCrearUsuario(View):
             image=self.renderSeguridadAlta,
             cursor='hand2'
         ) # End label
-        self.etiquetaImagenSeguridadAlta.pack()
+
         self.etiquetaImagenSeguridadAlta.place(x=360, y=290, height=90, width=120)
 
         # Etiqueta de titulo seguridad baja
@@ -293,7 +295,7 @@ class ViewCrearUsuario(View):
             font="SegoeUI 14 normal",
             cursor='hand2'
         ) # End label
-        self.etiquetaTituloSeguridadBaja.pack()
+
         self.etiquetaTituloSeguridadBaja.place(x=80, y=382, height=20, width=120)
 
         # Etiqueta de titulo seguridad media
@@ -305,7 +307,7 @@ class ViewCrearUsuario(View):
             font="SegoeUI 14 normal",
             cursor='hand2'
         ) # End label
-        self.etiquetaTituloSeguridadMedia.pack()
+
         self.etiquetaTituloSeguridadMedia.place(x=220, y=382, height=20, width=120)
 
         # Etiqueta de titulo seguridad alta
@@ -317,7 +319,7 @@ class ViewCrearUsuario(View):
             font="SegoeUI 14 normal",
             cursor='hand2'
         ) # End label
-        self.etiquetaTituloSeguridadAlta.pack()
+
         self.etiquetaTituloSeguridadAlta.place(x=360, y=382, height=20, width=120)
 
         # Etiqueta de descripcion seguridad baja
@@ -329,7 +331,7 @@ class ViewCrearUsuario(View):
             font="SegoeUI 10 normal",
             cursor='hand2'
         ) # End label
-        self.etiquetaDescripcionSeguridadBaja.pack()
+
         self.etiquetaDescripcionSeguridadBaja.place(x=80, y=405, height=35, width=120)
 
         # Etiqueta de descripcion seguridad media
@@ -341,7 +343,7 @@ class ViewCrearUsuario(View):
             font="SegoeUI 10 normal",
             cursor='hand2'
         ) # End label
-        self.etiquetaDescripcionSeguridadMedia.pack()
+
         self.etiquetaDescripcionSeguridadMedia.place(x=220, y=405, height=35, width=120)
 
         # Etiqueta de descripcion seguridad alta
@@ -353,7 +355,7 @@ class ViewCrearUsuario(View):
             font="SegoeUI 10 normal",
             cursor='hand2'
         ) # End label
-        self.etiquetaDescripcionSeguridadAlta.pack()
+
         self.etiquetaDescripcionSeguridadAlta.place(x=360, y=405, height=35, width=120)
 
         # Boton para cancelar registro
@@ -369,7 +371,7 @@ class ViewCrearUsuario(View):
             image=self.renderCancelar,
             compound = Tkinter.LEFT,
         ) # End button
-        self.botonCancelar.pack()
+
         self.botonCancelar.place(x=340, y=470, height=28, width=90)
 
         # Boton para efectuar registro
@@ -385,7 +387,7 @@ class ViewCrearUsuario(View):
             image=self.renderRegistrar,
             compound = Tkinter.LEFT,
         ) # End button
-        self.botonRegistrar.pack()
+
         self.botonRegistrar.place(x=440, y=470, height=28, width=90)
 
         # Desactivar inicialmente el boton de registrar
@@ -402,6 +404,7 @@ class ViewCrearUsuario(View):
 
         # Boton cargar registros y recopilar informacion EEG
         self.botonEscaneoEEG.bind("<Button-1>", controller.botonRegistrarEEG_Click)
+        self.botonGrabacionMat.bind("<Button-1>", controller.botonGrabacionMAT_Click)
 
         # Boton para anular seleccion de origen de datos EEG
         self.botonDescartarDatos.bind("<Button-1>", controller.botonDescartarDatos_Click)

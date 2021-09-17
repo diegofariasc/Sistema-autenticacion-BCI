@@ -30,6 +30,17 @@ class ControllerIniciado(ControllerSelectorSeguridad):
         self._view.etiquetaImagenUsuario.config(image=self.renderUsuario)
         self._view.etiquetaNombreUsuario.config(text=datosUsuario[1])
 
+        # Mostrar datos sobre el numero de muestras y sesiones
+        muestras = self._model.obtenerMuestrasDisponibles(self.__idUsuario)
+        sesiones = self._model.obtenerSesionesEntrenamiento(self.__idUsuario)
+
+        self._view.etiquetaMuestras.config(
+            text= 'Muestras disponibles: ' + str(muestras) 
+        ) # End config
+        self._view.etiquetaSesionesRegistradas.config(
+            text= 'Sesiones registradas: ' + str(sesiones) 
+        ) # End config
+
         # Leer fecha y mostrarla en el view
         fechaRegistro = datosUsuario[3]
         locale.setlocale(locale.LC_TIME, "es_ES") 

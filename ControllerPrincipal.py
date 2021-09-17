@@ -10,6 +10,7 @@ from ViewAuxiliar               import ViewAuxiliar
 from ControllerRecopilador      import ControllerRecopilador
 from ViewRecopilador            import ViewRecopilador
 from tkinter                    import messagebox as MessageBox
+from Movimiento                 import Movimiento
 
 import tkinter as Tkinter
 import locale
@@ -209,7 +210,8 @@ class ControllerPrincipal(Controller):
             # Activar los botones para inicio
             self._view.botonContrasena.bind("<Button-1>", self.botonContrasena_Click)
             self._view.botonEscaneoEEG.bind("<Button-1>", self.botonUsarEscaneoEEG_Click)
-            
+            self._view.botonGrabacionMAT.bind("<Button-1>", self.botonUsarArchivoMAT_click)
+
             # Recuperar datos del usuario seleccionado en el model
             datosUsuario = self._model.obtenerDatosUsuario(self.__usuarioSeleccionado, porIndice)
 
@@ -322,6 +324,71 @@ class ControllerPrincipal(Controller):
                 
                 # Restaurar el view principal
                 self._view.ventana.deiconify()
+
+    def botonUsarArchivoMAT_click(self, _):
+        
+        senalProcesada_C1, senalProcesada_C2 = self._model.obtenerGrabacionMAT()
+        
+        # Recuperar los datos de entrenamiento de la base de datos
+        entrenamiento_C1 = self._model.obtenerExperimentos(
+            self.idUsuarioSeleccionado,
+            Movimiento.TIPO_C1
+        ) # End obtenerExperimentos
+        entrenamiento_C2 = self._model.obtenerExperimentos(
+            self.idUsuarioSeleccionado,
+            Movimiento.TIPO_C2
+        ) # End obtenerExperimentos
+
+        # Obtener los parametros de autenticacion
+        # i.e. las fronteras, medias y desviaciones
+        parametros_C1 = self._model.obtenerParametrosAutenticacion(entrenamiento_C1)
+        parametros_C2 = self._model.obtenerParametrosAutenticacion(entrenamiento_C2)
+
+        # Determinar el estado de aprobacion
+        estados_C1 = self._model.obtenerAprobados(parametros_C1, senalProcesada_C1, self.idUsuarioSeleccionado)
+        estados_C2 = self._model.obtenerAprobados(parametros_C2, senalProcesada_C2, self.idUsuarioSeleccionado)
+        aprueba = self._model.determinarEstadoAutenticacion(
+            self.idUsuarioSeleccionado,
+            estados_C1, estados_C2
+        ) # End determinarEstadoAutenticacion
+        
+        if aprueba:
+            if self.hayUsuarioPreseleccionado:
+                print('200')
+                exit(0)
+            else:
+
+                # Crear un nuevo view de perfil y relacionarlo con un controller
+                viewIniciado = ViewIniciado()
+                controllerIniciado = ControllerIniciado( 
+                    viewIniciado, 
+                    self._model, 
+                    self.idUsuarioSeleccionado
+                ) # End construct
+                
+                # Cerrar ventana principal
+                self._view.ventana.destroy()
+                self._view.ventana.quit()
+                
+                controllerIniciado.inicializarView()
+
+        else:
+            MessageBox.showinfo(
+                "Error al autenticar",
+                "Sus señales no han podido probar su identidad"
+            ) # End showinfo
+            
+
+        # Si el sistema determino que el sujeto es correcto
+        # reentrenar
+        # if aprueba:
+        #     senalReentrenamiento_C1, senalReentrenamiento_C2 = self._model.procesarSenal(senal_C1, senal_C2, 1)
+
+        #     self._model.abrirEspacioParaExperimentos(senalReentrenamiento_C1, self.__controllerRaiz.idUsuarioSeleccionado)
+        #     self._model.insertarExperimentos(senalReentrenamiento_C1, Movimiento.TIPO_C1, self.__controllerRaiz.idUsuarioSeleccionado)
+        #     self._model.insertarExperimentos(senalReentrenamiento_C2, Movimiento.TIPO_C2, self.__controllerRaiz.idUsuarioSeleccionado)
+        #     self._model.notificarGrabacionSesion(self.__controllerRaiz.idUsuarioSeleccionado)
+
 
 
     def inicializarView(self):

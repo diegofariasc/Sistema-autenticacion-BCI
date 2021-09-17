@@ -54,6 +54,40 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
                 target=controllerViewRecopilador.inicializarView()
             ).start()
 
+    def botonGrabacionMAT_Click(self, _):
+
+        try:
+            senalProcesada_C1, senalProcesada_C2 = self._model.obtenerGrabacionMAT()
+            
+            # Cambiar view de la ventana raiz para denotar validacion
+            self._view.etiquetaSeccionEEG.config(
+                text = 'Datos de MATLAB' 
+            ) # End config
+            self._view.etiquetaImagenValidacionDatosEEG.config(  
+                image=self._view.renderValidacionCorrecta
+            ) # End config
+
+            # Desaparecer botones para seleccionar origen de datos
+            self._view.botonDescartarDatos.place(x=170, y=211, height=28, width=115)
+            self._view.botonEscaneoEEG.place_forget()
+
+            # Indicarle al segundo controller que los datos funcionan
+            # y pasar un apuntador a los datos
+            # Nota: La insercion se lleva a cabo en crear usuario 
+            # pues se necesita el identificador
+            self.aprobadoOrigenDatosEEG = True
+            self.datos_C1 = senalProcesada_C1
+            self.datos_C2 = senalProcesada_C2
+            self.hayDatosEEG = True
+            self.validarTodosCampos()
+            
+
+        except ValueError:
+            MessageBox.showerror(title='Datos incorrectos',
+            message='Debe seleccionar un archivo MATLAB válido i.e., ' + \
+                    'con dos clases denominadas \'class1\' y \'class2\' de CxMxE ' + \
+                    'con una sesión EEG para entrenar')
+        
     """
     El metodo es invocado cuando se hace clic en el boton de
     descartar datos en el view
@@ -70,7 +104,7 @@ class ControllerCrearUsuario(ControllerSelectorSeguridad):
 
         # Reflejar la desaprobacion en el view
         self._view.etiquetaSeccionEEG.config(
-            text='Datos de entrenamiento EEG: No registrados' 
+            text='Datos de entrenamiento EEG: No proporcionados' 
         ) # End config
 
         self._view.etiquetaImagenValidacionDatosEEG.config(  

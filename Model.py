@@ -469,7 +469,7 @@ class Model():
 
                     instruction =   "INSERT INTO EXPERIMENTO (usuario, numeroExperimento, canal, valor, tipo) " + \
                                     "VALUES (%s, %s, %s, %s, %s)"
-                    nuevaTupla = (usuario, n_exp , n_dim, experimentos[n_dim, n_exp], tipo)
+                    nuevaTupla = (usuario, n_exp , n_dim, float(experimentos[n_dim, n_exp]), tipo)
                     cursor.execute( instruction, nuevaTupla )
 
             # Desechar experimentos que rebasen el tamano de buffer indicado

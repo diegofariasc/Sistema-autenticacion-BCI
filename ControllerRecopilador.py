@@ -121,7 +121,7 @@ class ControllerRecopilador(Controller, Thread):
     def conducirExperimento(self, tareas, duracionExperimentos, callback):
 
         # Crear un lector
-        lector = Lector(Lector.SIMULADOR,[1,2,3],puerto="")
+        lector = Lector(Lector.CYTON,[1,2,3],puerto="COM3")
         
         # Inicializar colecciones de datos
         senal_C1 = []
@@ -161,9 +161,9 @@ class ControllerRecopilador(Controller, Thread):
         ) # End config
 
         # VALORES ALEATORIOS -- PRUEBA --
-        from numpy.random import rand
-        senal_C1 = rand(5,3,500)
-        senal_C2 = rand(5,3,500)
+        # from numpy.random import rand
+        # senal_C1 = rand(5,3,500)
+        # senal_C2 = rand(5,3,500)
 
         # Procesar la senal obtenida
         sleep(2)
